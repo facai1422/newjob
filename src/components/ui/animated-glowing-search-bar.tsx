@@ -16,7 +16,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   className,
 }) => {
   return (
-    <div className={['relative flex items-center justify-center', className].filter(Boolean).join(' ')}>
+    <div className={['relative flex items-center justify-center search-autoplay', className].filter(Boolean).join(' ')}>
       <div className="absolute -z-10 w-full" />
       <div id="poda" className="relative flex items-center justify-center group">
         <div className="absolute -z-10 overflow-hidden h-full w-full max-h-[70px] max-w-[314px] rounded-xl blur-[3px]

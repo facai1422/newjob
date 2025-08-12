@@ -18,6 +18,8 @@ import { RevealText } from '@/components/ui/reveal-text';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import ImageAutoSlider from '@/components/ui/image-auto-slider';
 import RealismButton from '@/components/ui/realism-button';
+import LogoutFab from '@/components/ui/logout-fab';
+import { Footer as NewFooter } from '@/components/ui/footer-section';
 
 interface JobLocation {
   id: number;
@@ -230,7 +232,7 @@ function App() {
           <div className="min-h-screen">
             <GeometricBackground />
             <div className="relative">
-              <div className="absolute inset-x-0 top-0 z-30">
+              <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10">
                 <nav className="container mx-auto px-4 py-4 text-white">
                   <div className="flex items-center justify-between">
                     {/* 左侧：将 Logo 去掉，直接放语言切换图标与主操作 */}
@@ -253,12 +255,13 @@ function App() {
                     {/* 右侧：登录/退出按钮，替换原来的下拉菜单图标 */}
                     <div className="flex items-center gap-3">
                       {isLoggedIn ? (
-                        <button onClick={handleLogout} aria-label="Logout" className="bg-white/10 text-white h-10 md:h-9 lg:h-8 px-4 md:px-3 rounded-full hover:bg-white/20 border border-white/10 text-sm md:text-xs select-none touch-manipulation">
-                          {t('auth.logout')}
-                        </button>
+                        <LogoutFab onClick={handleLogout} />
                       ) : (
-                        <Link to="/dashabi/login" aria-label="Login" className="bg-white/10 text-white h-10 md:h-9 lg:h-8 px-4 md:px-3 rounded-full hover:bg-white/20 border border-white/10 text-sm md:text-xs select-none touch-manipulation">
-                          {t('auth.login')}
+                        <Link to="/dashabi/login" aria-label="Login" className="super-button">
+                          <span>{t('auth.login')}</span>
+                          <svg fill="none" viewBox="0 0 24 24" className="arrow">
+                            <path strokeLinejoin="round" strokeLinecap="round" strokeWidth={2} stroke="currentColor" d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
                         </Link>
                       )}
                     </div>
@@ -266,41 +269,42 @@ function App() {
                 </nav>
               </div>
 
-              <div className="pt-20 md:pt-24 lg:pt-28">
-                {/* 将 Hero 区域紧贴顶部按钮下方（红框位置） */}
+              {/* 搜索框位置：避开顶部导航与按钮区域 */}
+              <div className="pt-24 md:pt-28 lg:pt-32">
+                <div className="container mx-auto px-4 py-4">
+                  <div className="flex flex-col items-center gap-3 max-w-4xl mx-auto">
+                    <SearchComponent
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
+                      placeholder={t('hero.searchPlaceholder')}
+                    />
+                    <button
+                      onClick={doSearch}
+                      className="bg-slate-800 h-[56px] z-10 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-sm font-semibold leading-6 text-white inline-flex items-center justify-center"
+                    >
+                      <span className="absolute inset-0 overflow-hidden rounded-full">
+                        <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      </span>
+                      <span className="relative inline-flex items-center justify-center h-[52px] px-6 rounded-full bg-zinc-950 ring-1 ring-white/10">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-300 via-neutral-600 to-neutral-300">
+                          {t('hero.searchButton')}
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* Hero 文本放到搜索框下，轮播图在其下方 */}
+              <div className="pt-4">
                 <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
               </div>
-              {/* Slider moved below the hero text */}
               <div className="relative z-10 mt-6 md:mt-8 lg:mt-10">
                 <ImageAutoSlider className="h-64 md:h-80 lg:h-[28rem]" />
               </div>
             </div>
 
-            <section className="relative z-20 mt-6 md:mt-8 lg:mt-10">
-              <div className="container mx-auto px-4 py-4">
-                <div className="flex flex-col items-center gap-3 max-w-4xl mx-auto">
-                  <SearchComponent
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
-                    placeholder={t('hero.searchPlaceholder')}
-                  />
-                  <button
-                    onClick={doSearch}
-                    className="bg-slate-800 h-[56px] z-40 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-sm font-semibold leading-6 text-white inline-flex items-center justify-center"
-                  >
-                    <span className="absolute inset-0 overflow-hidden rounded-full">
-                      <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                    </span>
-                    <span className="relative inline-flex items-center justify-center h-[52px] px-6 rounded-full bg-zinc-950 ring-1 ring-white/10">
-                      <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-300 via-neutral-600 to-neutral-300">
-                        {t('hero.searchButton')}
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </section>
+            {/* 原搜索区块已上移，此处移除 */}
 
             <section className="py-12">
               <div className="container mx-auto px-4">
@@ -446,69 +450,9 @@ function App() {
               </div>
             </section>
 
-            <footer className="text-white/90 py-12 border-t border-white/10">
-              <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  <div>
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Building2 className="h-6 w-6" />
-                      <span className="text-lg font-bold">Hirely</span>
-                    </div>
-                    <p className="text-white/70">{t('footer.tagline')}</p>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-4">{t('footer.jobSeekers')}</h4>
-                    <ul className="space-y-2 text-white/70">
-                      <li><Link to="/jobs" className="hover:text-white">{t('footer.browseJobs')}</Link></li>
-                      <li><Link to="/resources" className="hover:text-white">{t('footer.careerResources')}</Link></li>
-                      <li><Link to="/resume-tips" className="hover:text-white">{t('footer.resumeTips')}</Link></li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-4">{t('footer.contact')}</h4>
-                    <ul className="space-y-2 text-white/70">
-                      <li>mz2503687@gmail.com</li>
-                      <li>1-800-TALENT</li>
-                      <li>Copyrights © HUIYING. All Rights Reserved</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-4">{t('footer.customerService')}</h4>
-                    <ul className="space-y-2 text-white/70">
-                      {customerService.whatsapp_link && (
-                        <li>
-                          <a 
-                            href={customerService.whatsapp_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-white flex items-center"
-                          >
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            WhatsApp
-                          </a>
-                        </li>
-                      )}
-                      {customerService.telegram_link && (
-                        <li>
-                          <a 
-                            href={customerService.telegram_link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-white flex items-center"
-                          >
-                            <MessageCircle className="h-4 w-4 mr-2" />
-                            Telegram
-                          </a>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                </div>
-                <div className="border-t border-white/10 mt-8 pt-8 text-center text-white/70">
-                  <p>&copy; 2025 Hirely. {t('footer.rights')}</p>
-                </div>
-              </div>
-            </footer>
+            <div className="mt-16">
+              <NewFooter />
+            </div>
           </div>
         } />
       </Routes>

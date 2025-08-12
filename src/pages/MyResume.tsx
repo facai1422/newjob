@@ -40,12 +40,14 @@ export function MyResume() {
 
   if (loading) return (
     <div className="relative min-h-screen">
+      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
       <GeometricBackground />
       <div className="relative z-10 p-6 text-white">Loading...</div>
     </div>
   );
   if (error) return (
     <div className="relative min-h-screen">
+      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
       <GeometricBackground />
       <div className="relative z-10 p-6 text-red-200">{error}</div>
     </div>
@@ -54,6 +56,7 @@ export function MyResume() {
   if (!resume) {
     return (
       <div className="relative min-h-screen">
+        <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
         <GeometricBackground />
         <div className="relative z-10 p-6 text-white">No resume found.</div>
       </div>
@@ -87,6 +90,7 @@ export function MyResume() {
 
   return (
     <div className="relative min-h-screen">
+      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
       <GeometricBackground />
       <div className="relative z-10 max-w-5xl mx-auto p-6">
         <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
