@@ -1,0 +1,668 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useLanguage } from '../i18n/LanguageContext';
+import { Users, BriefcaseIcon, Settings, BarChart, CheckCircle, XCircle, ArrowLeft, LogOut, MessageCircle, Plus, Edit, Trash2, UserPlus, Lock } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import { HeroGeometric } from '@/components/ui/shape-landing-hero';
+
+interface Resume {
+  id: number;
+  fullName: string;
+  email: string;
+  status: 'pending' | 'approved' | 'rejected';
+  submitted_at: string;
+  education: string;
+  experience: string;
+  skills: string;
+  coverLetter: string;
+}
+
+interface CustomerServiceSettings {
+  whatsapp_link: string;
+  telegram_link: string;
+}
+
+interface Job {
+  id: string;
+  title: string;
+  salary: string;
+  description: string;
+  working_hours: string;
+  image_url: string;
+  location: string;
+  rich_description: any[];
+}
+
+export function AdminDashboard() {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [settings, setSettings] = useState<CustomerServiceSettings>({
+    whatsapp_link: '',
+    telegram_link: ''
+  });
+  const [isEditingSettings, setIsEditingSettings] = useState(false);
+  const [isAddingJob, setIsAddingJob] = useState(false);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
+  const [isAddingSubAccount, setIsAddingSubAccount] = useState(false);
+  const [subAccounts, setSubAccounts] = useState<any[]>([]);
+  const [subAccountForm, setSubAccountForm] = useState({
+    email: '',
+    permissions: {
+      manage_jobs: false,
+      view_resumes: false,
+      manage_resumes: false
+    }
+  });
+  const [jobForm, setJobForm] = useState({
+    title: '',
+    salary: '',
+    description: '',
+    working_hours: '',
+    image_url: '',
+    location: '',
+    rich_description: []
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    checkAuth();
+    fetchData();
+    fetchSubAccounts();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        navigate('/dashabi/login');
+        return;
+      }
+
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com')) {
+        navigate('/dashabi/login');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com')) {
+        navigate('/dashabi/login');
+        return;
+      }
+
+      fetchData();
+    } catch (error) {
+      console.error('Auth error:', error);
+      navigate('/dashabi/login');
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      await Promise.all([fetchResumes(), fetchSettings(), fetchJobs()]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/dashabi/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
+  const fetchResumes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('resumes')
+        .select('*')
+        .order('submitted_at', { ascending: false });
+
+      if (error) throw error;
+      setResumes(data || []);
+    } catch (error) {
+      console.error('Error fetching resumes:', error);
+    }
+  };
+
+  const fetchSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('customer_service_settings')
+        .select('*')
+        .limit(1)
+        .single();
+      
+      if (error) throw error;
+      if (data) setSettings(data);
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  const fetchJobs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setJobs(data || []);
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    }
+  };
+
+  const fetchSubAccounts = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('sub_accounts')
+        .select('*')
+        .eq('parent_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSubAccounts(data || []);
+    } catch (error) {
+      console.error('Error fetching sub accounts:', error);
+    }
+  };
+
+  const handleSubAccountSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('sub_accounts')
+        .insert({
+          email: subAccountForm.email,
+          parent_id: user.id,
+          permissions: subAccountForm.permissions
+        });
+
+      if (error) throw error;
+
+      setIsAddingSubAccount(false);
+      setSubAccountForm({
+        email: '',
+        permissions: {
+          manage_jobs: false,
+          view_resumes: false,
+          manage_resumes: false
+        }
+      });
+      await fetchSubAccounts();
+    } catch (error) {
+      console.error('Error creating sub account:', error);
+    }
+  };
+
+  const handleUpdatePermissions = async (id: string, permissions: any) => {
+    try {
+      const { error } = await supabase
+        .from('sub_accounts')
+        .update({ permissions })
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchSubAccounts();
+    } catch (error) {
+      console.error('Error updating permissions:', error);
+    }
+  };
+
+  const handleDeleteSubAccount = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this sub-account?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('sub_accounts')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchSubAccounts();
+    } catch (error) {
+      console.error('Error deleting sub account:', error);
+    }
+  };
+
+  const handleResumeAction = async (id: number, status: 'approved' | 'rejected') => {
+    try {
+      const { error } = await supabase
+        .from('resumes')
+        .update({ status })
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchResumes();
+    } catch (error) {
+      console.error('Error updating resume status:', error);
+    }
+  };
+
+  const handleSettingsUpdate = async () => {
+    try {
+      const { error } = await supabase
+        .from('customer_service_settings')
+        .update({
+          whatsapp_link: settings.whatsapp_link,
+          telegram_link: settings.telegram_link,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', 1);
+
+      if (error) throw error;
+      setIsEditingSettings(false);
+      await fetchSettings();
+    } catch (error) {
+      console.error('Error updating settings:', error);
+    }
+  };
+
+  const handleJobSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingJob) {
+        const { error } = await supabase
+          .from('jobs')
+          .update(jobForm)
+          .eq('id', editingJob.id);
+
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('jobs')
+          .insert([jobForm]);
+
+        if (error) throw error;
+      }
+
+      setIsAddingJob(false);
+      setEditingJob(null);
+      setJobForm({ title: '', salary: '', description: '', working_hours: '', image_url: '', location: '', rich_description: [] });
+      await fetchJobs();
+    } catch (error) {
+      console.error('Error saving job:', error);
+    }
+  };
+
+  const handleDeleteJob = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this job posting?')) return;
+    
+    try {
+      const { error } = await supabase
+        .from('jobs')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      await fetchJobs();
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
+  };
+
+  const startEditJob = (job: Job) => {
+    setEditingJob(job);
+    setJobForm({
+      title: job.title,
+      salary: job.salary,
+      description: job.description,
+      working_hours: job.working_hours,
+      image_url: job.image_url || '',
+      location: job.location || '',
+      rich_description: job.rich_description || []
+    });
+    setIsAddingJob(true);
+  };
+
+  const stats = [
+    { label: t('stats.totalResumes'), value: resumes.length, icon: BriefcaseIcon },
+    { label: t('stats.pendingResumes'), value: resumes.filter(r => r.status === 'pending').length, icon: BarChart },
+    { label: t('stats.approvedResumes'), value: resumes.filter(r => r.status === 'approved').length, icon: Users },
+    { label: t('stats.rejectedResumes'), value: resumes.filter(r => r.status === 'rejected').length, icon: Users }
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative min-h-screen">
+      <div className="absolute inset-0 -z-10">
+        <HeroGeometric badge="Admin" title1="Hirely" title2="Dashboard" />
+      </div>
+      <nav className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
+              <Link 
+                to="/" 
+                className="inline-flex items-center text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="h-5 w-5 mr-2" />
+                {t('nav.back')}
+              </Link>
+              <h1 className="ml-4 text-xl font-bold text-gray-900">Admin Dashboard</h1>
+            </div>
+            <div className="flex items-center">
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                {t('auth.logout')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat, index) => (
+              <div key={index} className="bg-white overflow-hidden shadow rounded-lg">
+                <div className="p-5">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0">
+                      <stat.icon className="h-6 w-6 text-gray-400" />
+                    </div>
+                    <div className="ml-5 w-0 flex-1">
+                      <dl>
+                        <dt className="text-sm font-medium text-gray-500 truncate">
+                          {stat.label}
+                        </dt>
+                        <dd className="text-2xl font-semibold text-gray-900">
+                          {stat.value}
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <div className="bg-white shadow sm:rounded-lg mb-8">
+              <div className="px-4 py-5 sm:p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Job Postings
+                  </h3>
+                  <button
+                    onClick={() => {
+                      setIsAddingJob(true);
+                      setEditingJob(null);
+                      setJobForm({ title: '', salary: '', description: '', working_hours: '', image_url: '', location: '', rich_description: [] });
+                    }}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add New Job
+                  </button>
+                </div>
+
+                {isAddingJob && (
+                  <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
+                      <h3 className="text-lg font-medium text-gray-900 mb-4">
+                        {editingJob ? 'Edit Job Posting' : 'Add New Job Posting'}
+                      </h3>
+                      <form onSubmit={handleJobSubmit} className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Title</label>
+                          <input
+                            type="text"
+                            value={jobForm.title}
+                            onChange={(e) => setJobForm({ ...jobForm, title: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="Job title"
+                            aria-label="Job title"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Salary</label>
+                          <input
+                            type="text"
+                            value={jobForm.salary}
+                            onChange={(e) => setJobForm({ ...jobForm, salary: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="Salary range"
+                            aria-label="Salary"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Image URL</label>
+                          <input
+                            type="url"
+                            value={jobForm.image_url}
+                            onChange={(e) => setJobForm({ ...jobForm, image_url: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="https://example.com/image.jpg"
+                            aria-label="Image URL"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Location</label>
+                          <select
+                            value={jobForm.location}
+                            onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            aria-label="Location"
+                            required
+                          >
+                            <option value="">Select Location</option>
+                            <option value="Ghana">Ghana</option>
+                            <option value="Cambodia">Cambodia</option>
+                            <option value="Malaysia">Malaysia</option>
+                            <option value="Indonesia">Indonesia</option>
+                            <option value="Myanmar">Myanmar</option>
+                            <option value="Dubai">Dubai</option>
+                            <option value="Oman">Oman</option>
+                            <option value="Philippines">Philippines</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Description</label>
+                          <textarea
+                            value={jobForm.description}
+                            onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
+                            rows={4}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="Job description"
+                            aria-label="Job description"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Working Hours</label>
+                          <input
+                            type="text"
+                            value={jobForm.working_hours}
+                            onChange={(e) => setJobForm({ ...jobForm, working_hours: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="Working hours"
+                            aria-label="Working hours"
+                            required
+                          />
+                        </div>
+                        <div className="flex justify-end space-x-3 mt-6">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsAddingJob(false);
+                              setEditingJob(null);
+                            }}
+                            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                          >
+                            {editingJob ? 'Save Changes' : 'Create Job'}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salary</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Working Hours</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {jobs.map((job) => (
+                          <tr key={job.id}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{job.title}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{job.salary}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {job.working_hours}
+                              <br />
+                              <span className="text-blue-600">{job.location}</span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                              <button
+                                onClick={() => startEditJob(job)}
+                                className="text-blue-600 hover:text-blue-900 mr-4"
+                                aria-label="Edit job"
+                                title="Edit job"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteJob(job.id)}
+                                className="text-red-600 hover:text-red-900"
+                                aria-label="Delete job"
+                                title="Delete job"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <div className="bg-white shadow sm:rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-medium text-gray-900">
+                    Customer Service Settings
+                  </h3>
+                  <div className="mt-5">
+                    {isEditingSettings ? (
+                      <div className="space-y-4">
+                        <div>
+                          <label htmlFor="whatsapp" className="block text-sm font-medium text-gray-700">
+                            WhatsApp Link
+                          </label>
+                          <input
+                            type="text"
+                            id="whatsapp"
+                            value={settings.whatsapp_link}
+                            onChange={(e) => setSettings({ ...settings, whatsapp_link: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="https://wa.me/your-number"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="telegram" className="block text-sm font-medium text-gray-700">
+                            Telegram Link
+                          </label>
+                          <input
+                            type="text"
+                            id="telegram"
+                            value={settings.telegram_link}
+                            onChange={(e) => setSettings({ ...settings, telegram_link: e.target.value })}
+                            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder="https://t.me/your-username"
+                          />
+                        </div>
+                        <div className="flex justify-end space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingSettings(false)}
+                            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            onClick={handleSettingsUpdate}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                          >
+                            Save Changes
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500">WhatsApp Link</h4>
+                          <p className="mt-1 text-sm text-gray-900">{settings.whatsapp_link || 'Not set'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-500">Telegram Link</h4>
+                          <p className="mt-1 text-sm text-gray-900">{settings.telegram_link || 'Not set'}</p>
+                        </div>
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => setIsEditingSettings(true)}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit Settings
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
