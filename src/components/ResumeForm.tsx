@@ -214,7 +214,7 @@ interface FormData {
 }
 
 export function ResumeForm() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -289,9 +289,37 @@ export function ResumeForm() {
     );
   }
 
-  const countries = ['中国', '美国', '英国', '加拿大', '澳大利亚', '德国', '法国', '日本', '韩国', '新加坡', '其他'];
-  const educationLevels = ['高中', '大专', '本科', '硕士', '博士', '其他'];
-  const positions = ['前端开发工程师', '后端开发工程师', '全栈开发工程师', '移动端开发工程师', '产品经理', 'UI/UX设计师', '数据分析师', '运营专员', '市场营销', '其他'];
+  const countries = React.useMemo(() => {
+    const map: Record<string, string[]> = {
+      zh: ['中国', '美国', '英国', '加拿大', '澳大利亚', '德国', '法国', '日本', '韩国', '新加坡', '其他'],
+      en: ['China', 'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany', 'France', 'Japan', 'South Korea', 'Singapore', 'Other'],
+      es: ['China', 'Estados Unidos', 'Reino Unido', 'Canadá', 'Australia', 'Alemania', 'Francia', 'Japón', 'Corea del Sur', 'Singapur', 'Otro'],
+      pt: ['China', 'Estados Unidos', 'Reino Unido', 'Canadá', 'Austrália', 'Alemanha', 'França', 'Japão', 'Coreia do Sul', 'Cingapura', 'Outro'],
+      fr: ['Chine', 'États‑Unis', 'Royaume‑Uni', 'Canada', 'Australie', 'Allemagne', 'France', 'Japon', 'Corée du Sud', 'Singapour', 'Autre'],
+      de: ['China', 'Vereinigte Staaten', 'Vereinigtes Königreich', 'Kanada', 'Australien', 'Deutschland', 'Frankreich', 'Japan', 'Südkorea', 'Singapur', 'Andere'],
+      ar: ['الصين', 'الولايات المتحدة', 'المملكة المتحدة', 'كندا', 'أستراليا', 'ألمانيا', 'فرنسا', 'اليابان', 'كوريا الجنوبية', 'سنغافورة', 'أخرى'],
+      ja: ['中国', 'アメリカ合衆国', 'イギリス', 'カナダ', 'オーストラリア', 'ドイツ', 'フランス', '日本', '韓国', 'シンガポール', 'その他'],
+      hi: ['चीन', 'संयुक्त राज्य', 'यूनाइटेड किंगडम', 'कनाडा', 'ऑस्ट्रेलिया', 'जर्मनी', 'फ्रांस', 'जापान', 'दक्षिण कोरिया', 'सिंगापुर', 'अन्य'],
+      km: ['ចិន', 'សហរដ្ឋអាមេរិក', 'ចក្រភពអង់គ្លេស', 'កាណាដា', 'អូស្ត្រាលី', 'អាល្លឺម៉ង់', 'បារាំង', 'ជប៉ុន', 'កូរ៉េ​ទាក់​ខាង​ត្បូង', 'សិង្ហបុរី', 'ផ្សេងៗ']
+    };
+    return map[language] || map.zh;
+  }, [language]);
+
+  const educationLevels = React.useMemo(() => {
+    const map: Record<string, string[]> = {
+      zh: ['高中', '大专', '本科', '硕士', '博士', '其他'],
+      en: ['High School', 'Associate', 'Bachelor', 'Master', 'Doctorate', 'Other'],
+      es: ['Secundaria', 'Técnico', 'Licenciatura', 'Maestría', 'Doctorado', 'Otro'],
+      pt: ['Ensino médio', 'Tecnólogo', 'Bacharelado', 'Mestrado', 'Doutorado', 'Outro'],
+      fr: ['Lycée', 'Licence pro', 'Licence', 'Master', 'Doctorat', 'Autre'],
+      de: ['Abitur', 'Fachhochschule', 'Bachelor', 'Master', 'Doktor', 'Andere'],
+      ar: ['ثانوية', 'دبلوم', 'بكالوريوس', 'ماجستير', 'دكتوراه', 'أخرى'],
+      ja: ['高校', '短大', '学士', '修士', '博士', 'その他'],
+      hi: ['हाई स्कूल', 'डिप्लोमा', 'स्नातक', 'स्नातकोत्तर', 'पीएचडी', 'अन्य'],
+      km: ['វិទ្យាល័យ', 'បរិញ្ញាបត្ររង', 'បរិញ្ញាបត្រ', 'អនុបណ្ឌិត', 'បណ្ឌិត', 'ផ្សេងៗ']
+    };
+    return map[language] || map.zh;
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -348,10 +376,7 @@ export function ResumeForm() {
                 <Input type="tel" placeholder={t('resume.placeholderPhone')} value={formData.phone} onChange={(e) => handleInputChange('phone', e.target.value)} required />
               </div>
               <div className="space-y-2"><Label className="flex items-center space-x-2"><Briefcase className="h-4 w-4" /><span>{t('resume.position')} *</span></Label>
-                <Select value={formData.position} onChange={(e) => handleInputChange('position', e.target.value)} required>
-                  <option value="">{t('resume.selectPosition')}</option>
-                  {positions.map(p => (<option key={p} value={p}>{p}</option>))}
-                </Select>
+                <Input type="text" placeholder={t('resume.selectPosition')} value={formData.position} onChange={(e) => handleInputChange('position', e.target.value)} required />
               </div>
             </div>
 
