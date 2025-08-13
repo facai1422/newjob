@@ -21,6 +21,7 @@ import RealismButton from '@/components/ui/realism-button';
 import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
 // import { Globe as GlobeCanvas } from '@/components/ui/globe';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 interface JobLocation {
   id: number;
@@ -386,18 +387,23 @@ function App() {
                     springDuration={500}
                   />
                 </div>
-                <div className="flex flex-col gap-6">
-                  {jobLocations.map((location) => (
-                    <div key={location.id} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                      <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
+
+                {/* 单卡片左右滑动 */}
+                <ContainerScroll titleComponent={<div />}> 
+                  <div className="relative h-full w-full">
+                    <div className="flex h-full w-full overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4">
+                      {jobLocations.map((location) => (
                         <Link
+                          key={location.id}
                           to={`/jobs/location/${encodeURIComponent(t(location.nameKey))}`}
-                          className="block h-64 w-full relative group"
                           aria-label={`View jobs in ${t(location.nameKey)}`}
+                          className="relative snap-center shrink-0 w-[calc(100%-0rem)] md:w-[900px] h-full group rounded-2xl overflow-hidden"
                         >
                           <img
                             src={location.image}
                             alt={t(location.nameKey)}
+                            loading="lazy"
+                            decoding="async"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
@@ -409,10 +415,10 @@ function App() {
                             </div>
                           </div>
                         </Link>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </ContainerScroll>
               </div>
             </section>
 
