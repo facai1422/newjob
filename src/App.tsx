@@ -308,7 +308,7 @@ function App() {
               </div>
               {/* Hero 文本放到搜索框下，轮播图在其下方 */}
               <div className="pt-4">
-                {prefersReducedMotion || isLowEndDevice ? (
+                {prefersReducedMotion ? (
                   <div className="container mx-auto px-4 text-center text-white">
                     <h2 className="text-2xl md:text-4xl font-bold">{t('hero.title')}</h2>
                     <p className="text-white/70 mt-2">{t('hero.subtitle')}</p>
@@ -437,7 +437,7 @@ function App() {
               <div className="container mx-auto px-4">
                 <h2 className="sr-only">{t('whyUs.title')}</h2>
                 <div className="mb-8 flex justify-center">
-                  {prefersReducedMotion || isLowEndDevice ? (
+                  {prefersReducedMotion ? (
                     <h3 className="text-2xl md:text-4xl text-white font-semibold">{t('whyUs.title')}</h3>
                   ) : (
                     <RevealText
