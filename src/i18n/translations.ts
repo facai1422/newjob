@@ -650,5 +650,453 @@ export const translations = {
       workingHours: '勤務時間',
       apply: '今すぐ応募'
     }
+  },
+  de: {
+    nav: {
+      jobs: 'Jobs',
+      about: 'Über uns',
+      employers: 'Für Arbeitgeber',
+      postJob: 'Stelle veröffentlichen',
+      back: 'Zurück'
+    },
+    hero: {
+      title: 'Finde deine nächste Karrieremöglichkeit',
+      subtitle: 'Verbinde dich mit Top-Unternehmen und finde deine perfekte Rolle',
+      searchPlaceholder: 'Jobtitel oder Stichwort',
+      searchButton: 'Jobs suchen'
+    },
+    featured: {
+      title: 'Empfohlene Positionen',
+      viewDetails: 'Details anzeigen',
+      fullTime: 'Vollzeit',
+      contract: 'Vertrag'
+    },
+    locations: {
+      title: 'Arbeitsorte',
+      openings: 'offene Stellen',
+      ghana: 'Ghana',
+      cambodia: 'Kambodscha',
+      malaysia: 'Malaysia',
+      indonesia: 'Indonesien',
+      myanmar: 'Myanmar',
+      dubai: 'Dubai',
+      oman: 'Oman',
+      philippines: 'Philippinen'
+    },
+    whyUs: {
+      title: 'Warum Hirely wählen',
+      topCompanies: {
+        title: 'Top-Unternehmen',
+        desc: 'Verbinde dich mit führenden Unternehmen und Organisationen der Branche'
+      },
+      qualityPositions: {
+        title: 'Qualitätsstellen',
+        desc: 'Ausgewählte Stellenangebote verifizierter Arbeitgeber'
+      },
+      careerGrowth: {
+        title: 'Karrierewachstum',
+        desc: 'Möglichkeiten für Aufstieg und berufliche Entwicklung'
+      }
+    },
+    footer: {
+      tagline: 'Talente mit Chancen verbinden',
+      jobSeekers: 'Für Bewerber',
+      browseJobs: 'Jobs durchsuchen',
+      careerResources: 'Karriereressourcen',
+      resumeTips: 'Lebenslauf-Tipps',
+      employers: 'Für Arbeitgeber',
+      postJob: 'Stelle veröffentlichen',
+      hiringSolutions: 'Recruiting-Lösungen',
+      pricing: 'Preise',
+      contact: 'Kontakt',
+      customerService: 'Kundendienst',
+      rights: 'Alle Rechte vorbehalten'
+    },
+    auth: {
+      login: 'Anmelden',
+      register: 'Registrieren',
+      email: 'E-Mail',
+      password: 'Passwort',
+      loginButton: 'Anmelden',
+      registerButton: 'Registrieren',
+      needAccount: 'Kein Konto? Jetzt registrieren',
+      haveAccount: 'Bereits ein Konto? Jetzt anmelden',
+      logout: 'Abmelden',
+      processing: 'Wird verarbeitet...',
+      adminAccess: 'Nur für Administratoren',
+      createAccount: 'Erstelle dein Konto',
+      resumeAccess: 'Bitte anmelden oder registrieren, um deinen Lebenslauf einzureichen',
+      genericError: 'Etwas ist schiefgelaufen. Bitte später erneut versuchen.',
+      emailNotConfirmed: 'Deine E‑Mail ist nicht bestätigt. Bitte Posteingang prüfen und E‑Mail bestätigen.',
+      resendConfirmation: 'Bestätigungs‑E‑Mail erneut senden',
+      confirmationSent: 'Bestätigungs‑E‑Mail wurde gesendet. Bitte Posteingang prüfen.'
+    },
+    resume: {
+      submitTitle: 'Lebenslauf einreichen',
+      myResume: 'Mein Lebenslauf',
+      fullName: 'Vollständiger Name',
+      email: 'E‑Mail',
+      phone: 'Telefon',
+      education: 'Ausbildung',
+      experience: 'Berufserfahrung',
+      skills: 'Fähigkeiten',
+      coverLetter: 'Anschreiben',
+      required: 'Dieses Feld ist erforderlich',
+      submit: 'Lebenslauf einreichen',
+      submitting: 'Wird eingereicht...',
+      submitSuccess: 'Lebenslauf erfolgreich eingereicht!',
+      status: 'Status',
+      statusPending: 'Ausstehend',
+      statusApproved: 'Genehmigt',
+      statusRejected: 'Abgelehnt'
+    },
+    stats: {
+      totalResumes: 'Lebensläufe insgesamt',
+      pendingResumes: 'Zur Prüfung',
+      approvedResumes: 'Genehmigt',
+      rejectedResumes: 'Abgelehnt'
+    },
+    job: {
+      salary: 'Gehalt',
+      description: 'Stellenbeschreibung',
+      workingHours: 'Arbeitszeit',
+      apply: 'Jetzt bewerben'
+    }
+  },
+  es: {
+    nav: {
+      jobs: 'Empleos',
+      about: 'Acerca de',
+      employers: 'Para empleadores',
+      postJob: 'Publicar empleo',
+      back: 'Atrás'
+    },
+    hero: {
+      title: 'Encuentra tu próxima oportunidad profesional',
+      subtitle: 'Conéctate con las mejores empresas y descubre tu rol ideal',
+      searchPlaceholder: 'Título del trabajo o palabra clave',
+      searchButton: 'Buscar empleos'
+    },
+    featured: {
+      title: 'Puestos destacados',
+      viewDetails: 'Ver detalles',
+      fullTime: 'Tiempo completo',
+      contract: 'Contrato'
+    },
+    locations: {
+      title: 'Ubicaciones de trabajo',
+      openings: 'vacantes',
+      ghana: 'Ghana',
+      cambodia: 'Camboya',
+      malaysia: 'Malasia',
+      indonesia: 'Indonesia',
+      myanmar: 'Myanmar',
+      dubai: 'Dubái',
+      oman: 'Omán',
+      philippines: 'Filipinas'
+    },
+    whyUs: {
+      title: 'Por qué elegir Hirely',
+      topCompanies: {
+        title: 'Empresas de primer nivel',
+        desc: 'Conéctate con empresas y organizaciones líderes del sector'
+      },
+      qualityPositions: {
+        title: 'Puestos de calidad',
+        desc: 'Listas seleccionadas de empleadores verificados'
+      },
+      careerGrowth: {
+        title: 'Crecimiento profesional',
+        desc: 'Oportunidades de ascenso y desarrollo profesional'
+      }
+    },
+    footer: {
+      tagline: 'Conectando talento con oportunidades',
+      jobSeekers: 'Para candidatos',
+      browseJobs: 'Explorar empleos',
+      careerResources: 'Recursos de carrera',
+      resumeTips: 'Consejos de CV',
+      employers: 'Para empleadores',
+      postJob: 'Publicar empleo',
+      hiringSolutions: 'Soluciones de contratación',
+      pricing: 'Precios',
+      contact: 'Contacto',
+      customerService: 'Atención al cliente',
+      rights: 'Todos los derechos reservados'
+    },
+    auth: {
+      login: 'Iniciar sesión',
+      register: 'Registrarse',
+      email: 'Correo electrónico',
+      password: 'Contraseña',
+      loginButton: 'Iniciar sesión',
+      registerButton: 'Registrarse',
+      needAccount: '¿No tienes cuenta? Regístrate',
+      haveAccount: '¿Ya tienes cuenta? Inicia sesión',
+      logout: 'Cerrar sesión',
+      processing: 'Procesando...',
+      adminAccess: 'Solo acceso de administrador',
+      createAccount: 'Crea tu cuenta',
+      resumeAccess: 'Inicia sesión o regístrate para enviar tu currículum',
+      genericError: 'Algo salió mal. Inténtalo de nuevo más tarde.',
+      emailNotConfirmed: 'Tu correo no está confirmado. Revisa tu bandeja de entrada y confirma tu correo.',
+      resendConfirmation: 'Reenviar correo de confirmación',
+      confirmationSent: 'Se envió el correo de confirmación. Revisa tu bandeja de entrada.'
+    },
+    resume: {
+      submitTitle: 'Enviar currículum',
+      myResume: 'Mi currículum',
+      fullName: 'Nombre completo',
+      email: 'Correo electrónico',
+      phone: 'Teléfono',
+      education: 'Educación',
+      experience: 'Experiencia laboral',
+      skills: 'Habilidades',
+      coverLetter: 'Carta de presentación',
+      required: 'Este campo es obligatorio',
+      submit: 'Enviar currículum',
+      submitting: 'Enviando...',
+      submitSuccess: '¡Currículum enviado con éxito!',
+      status: 'Estado',
+      statusPending: 'Pendiente de revisión',
+      statusApproved: 'Aprobado',
+      statusRejected: 'Rechazado'
+    },
+    stats: {
+      totalResumes: 'Currículums totales',
+      pendingResumes: 'Pendientes de revisión',
+      approvedResumes: 'Aprobados',
+      rejectedResumes: 'Rechazados'
+    },
+    job: {
+      salary: 'Salario',
+      description: 'Descripción del puesto',
+      workingHours: 'Horario de trabajo',
+      apply: 'Postular ahora'
+    }
+  },
+  pt: {
+    nav: {
+      jobs: 'Empregos',
+      about: 'Sobre',
+      employers: 'Para empregadores',
+      postJob: 'Publicar vaga',
+      back: 'Voltar'
+    },
+    hero: {
+      title: 'Encontre sua próxima oportunidade de carreira',
+      subtitle: 'Conecte-se com as melhores empresas e descubra seu cargo ideal',
+      searchPlaceholder: 'Cargo ou palavra-chave',
+      searchButton: 'Buscar vagas'
+    },
+    featured: {
+      title: 'Vagas em destaque',
+      viewDetails: 'Ver detalhes',
+      fullTime: 'Tempo integral',
+      contract: 'Contrato'
+    },
+    locations: {
+      title: 'Locais de trabalho',
+      openings: 'vagas',
+      ghana: 'Gana',
+      cambodia: 'Camboja',
+      malaysia: 'Malásia',
+      indonesia: 'Indonésia',
+      myanmar: 'Mianmar',
+      dubai: 'Dubai',
+      oman: 'Omã',
+      philippines: 'Filipinas'
+    },
+    whyUs: {
+      title: 'Por que escolher a Hirely',
+      topCompanies: {
+        title: 'Principais empresas',
+        desc: 'Conecte-se com empresas e organizações líderes do setor'
+      },
+      qualityPositions: {
+        title: 'Vagas de qualidade',
+        desc: 'Listas selecionadas de empregadores verificados'
+      },
+      careerGrowth: {
+        title: 'Crescimento na carreira',
+        desc: 'Oportunidades de promoção e desenvolvimento profissional'
+      }
+    },
+    footer: {
+      tagline: 'Conectando talento a oportunidades',
+      jobSeekers: 'Para candidatos',
+      browseJobs: 'Explorar vagas',
+      careerResources: 'Recursos de carreira',
+      resumeTips: 'Dicas de currículo',
+      employers: 'Para empregadores',
+      postJob: 'Publicar vaga',
+      hiringSolutions: 'Soluções de recrutamento',
+      pricing: 'Preços',
+      contact: 'Contato',
+      customerService: 'Atendimento ao cliente',
+      rights: 'Todos os direitos reservados'
+    },
+    auth: {
+      login: 'Entrar',
+      register: 'Registrar',
+      email: 'E-mail',
+      password: 'Senha',
+      loginButton: 'Entrar',
+      registerButton: 'Registrar',
+      needAccount: 'Não tem conta? Cadastre-se',
+      haveAccount: 'Já tem conta? Faça login',
+      logout: 'Sair',
+      processing: 'Processando...',
+      adminAccess: 'Acesso apenas para administradores',
+      createAccount: 'Crie sua conta',
+      resumeAccess: 'Faça login ou cadastre-se para enviar seu currículo',
+      genericError: 'Algo deu errado. Tente novamente mais tarde.',
+      emailNotConfirmed: 'Seu e-mail não está confirmado. Verifique sua caixa de entrada e confirme seu e-mail.',
+      resendConfirmation: 'Reenviar e-mail de confirmação',
+      confirmationSent: 'E-mail de confirmação enviado. Verifique sua caixa de entrada.'
+    },
+    resume: {
+      submitTitle: 'Enviar currículo',
+      myResume: 'Meu currículo',
+      fullName: 'Nome completo',
+      email: 'E-mail',
+      phone: 'Telefone',
+      education: 'Educação',
+      experience: 'Experiência profissional',
+      skills: 'Habilidades',
+      coverLetter: 'Carta de apresentação',
+      required: 'Este campo é obrigatório',
+      submit: 'Enviar currículo',
+      submitting: 'Enviando...',
+      submitSuccess: 'Currículo enviado com sucesso!',
+      status: 'Status',
+      statusPending: 'Aguardando análise',
+      statusApproved: 'Aprovado',
+      statusRejected: 'Reprovado'
+    },
+    stats: {
+      totalResumes: 'Total de currículos',
+      pendingResumes: 'Aguardando análise',
+      approvedResumes: 'Aprovados',
+      rejectedResumes: 'Reprovados'
+    },
+    job: {
+      salary: 'Salário',
+      description: 'Descrição da vaga',
+      workingHours: 'Jornada de trabalho',
+      apply: 'Candidatar-se agora'
+    }
+  },
+  fr: {
+    nav: {
+      jobs: 'Emplois',
+      about: 'À propos',
+      employers: 'Pour les employeurs',
+      postJob: 'Publier une offre',
+      back: 'Retour'
+    },
+    hero: {
+      title: 'Trouvez votre prochaine opportunité de carrière',
+      subtitle: 'Connectez-vous aux meilleures entreprises et découvrez votre rôle idéal',
+      searchPlaceholder: 'Intitulé du poste ou mot-clé',
+      searchButton: 'Rechercher des emplois'
+    },
+    featured: {
+      title: 'Postes à la une',
+      viewDetails: 'Voir les détails',
+      fullTime: 'Temps plein',
+      contract: 'Contrat'
+    },
+    locations: {
+      title: 'Lieux de travail',
+      openings: 'postes',
+      ghana: 'Ghana',
+      cambodia: 'Cambodge',
+      malaysia: 'Malaisie',
+      indonesia: 'Indonésie',
+      myanmar: 'Myanmar',
+      dubai: 'Dubaï',
+      oman: 'Oman',
+      philippines: 'Philippines'
+    },
+    whyUs: {
+      title: 'Pourquoi choisir Hirely',
+      topCompanies: {
+        title: 'Entreprises de premier plan',
+        desc: 'Connectez-vous aux entreprises et organisations leaders du secteur'
+      },
+      qualityPositions: {
+        title: 'Postes de qualité',
+        desc: 'Offres sélectionnées d\'employeurs vérifiés'
+      },
+      careerGrowth: {
+        title: 'Évolution de carrière',
+        desc: 'Opportunités d\'avancement et de développement professionnel'
+      }
+    },
+    footer: {
+      tagline: 'Relier les talents aux opportunités',
+      jobSeekers: 'Pour les candidats',
+      browseJobs: 'Parcourir les emplois',
+      careerResources: 'Ressources de carrière',
+      resumeTips: 'Conseils CV',
+      employers: 'Pour les employeurs',
+      postJob: 'Publier une offre',
+      hiringSolutions: 'Solutions de recrutement',
+      pricing: 'Tarifs',
+      contact: 'Contact',
+      customerService: 'Service client',
+      rights: 'Tous droits réservés'
+    },
+    auth: {
+      login: 'Connexion',
+      register: 'S\'inscrire',
+      email: 'E‑mail',
+      password: 'Mot de passe',
+      loginButton: 'Connexion',
+      registerButton: 'S\'inscrire',
+      needAccount: 'Pas de compte ? Inscrivez-vous',
+      haveAccount: 'Vous avez déjà un compte ? Connectez-vous',
+      logout: 'Déconnexion',
+      processing: 'Traitement...',
+      adminAccess: 'Accès administrateur uniquement',
+      createAccount: 'Créez votre compte',
+      resumeAccess: 'Veuillez vous connecter ou vous inscrire pour envoyer votre CV',
+      genericError: 'Une erreur s\'est produite. Veuillez réessayer plus tard.',
+      emailNotConfirmed: 'Votre e‑mail n\'est pas confirmé. Veuillez vérifier votre boîte de réception et confirmer votre e‑mail.',
+      resendConfirmation: 'Renvoyer l\'e‑mail de confirmation',
+      confirmationSent: 'E‑mail de confirmation envoyé. Veuillez vérifier votre boîte de réception.'
+    },
+    resume: {
+      submitTitle: 'Envoyer le CV',
+      myResume: 'Mon CV',
+      fullName: 'Nom complet',
+      email: 'E‑mail',
+      phone: 'Téléphone',
+      education: 'Formation',
+      experience: 'Expérience professionnelle',
+      skills: 'Compétences',
+      coverLetter: 'Lettre de motivation',
+      required: 'Ce champ est obligatoire',
+      submit: 'Envoyer le CV',
+      submitting: 'Envoi...',
+      submitSuccess: 'CV envoyé avec succès !',
+      status: 'Statut',
+      statusPending: 'En attente d\'examen',
+      statusApproved: 'Approuvé',
+      statusRejected: 'Refusé'
+    },
+    stats: {
+      totalResumes: 'Total des CV',
+      pendingResumes: 'En attente d\'examen',
+      approvedResumes: 'Approuvés',
+      rejectedResumes: 'Refusés'
+    },
+    job: {
+      salary: 'Salaire',
+      description: 'Description du poste',
+      workingHours: 'Heures de travail',
+      apply: 'Postuler maintenant'
+    }
   }
 };

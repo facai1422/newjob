@@ -8,7 +8,11 @@ const languages = [
   { code: 'hi', name: 'हिंदी' },
   { code: 'km', name: 'ខ្មែរ' },
   { code: 'ar', name: 'العربية' },
-  { code: 'ja', name: '日本語' }
+  { code: 'ja', name: '日本語' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'es', name: 'Español' },
+  { code: 'pt', name: 'Português' },
+  { code: 'fr', name: 'Français' }
 ];
 
 export function LanguageSelector() {
