@@ -24,6 +24,34 @@ export function LocationJobs() {
   const { t } = useLanguage();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Destination coordinates by location name
+  const destinationCoords: Record<string, { lat: number; lng: number }> = {
+    Ghana: { lat: 5.6037, lng: -0.187 }, // Accra
+    Cambodia: { lat: 11.5564, lng: 104.9282 }, // Phnom Penh
+    Malaysia: { lat: 3.139, lng: 101.6869 }, // Kuala Lumpur
+    Indonesia: { lat: -6.2088, lng: 106.8456 }, // Jakarta
+    Myanmar: { lat: 16.8661, lng: 96.1951 }, // Yangon
+    Dubai: { lat: 25.2048, lng: 55.2708 }, // Dubai
+    Oman: { lat: 23.588, lng: 58.3829 }, // Muscat
+    Philippines: { lat: 14.5995, lng: 120.9842 } // Manila
+  };
+  
+  const globalHubs: Array<{ lat: number; lng: number }> = [
+    { lat: 40.7128, lng: -74.006 }, // New York
+    { lat: 34.0522, lng: -118.2437 }, // Los Angeles
+    { lat: 51.5074, lng: -0.1278 }, // London
+    { lat: 48.8566, lng: 2.3522 }, // Paris
+    { lat: 41.0082, lng: 28.9784 }, // Istanbul
+    { lat: 35.6762, lng: 139.6503 } // Tokyo
+  ];
+  
+  const dots = (() => {
+    const key = (location || '').toString();
+    const dest = destinationCoords[key];
+    if (!dest) return [] as Array<{ start: {lat: number; lng: number}; end: {lat: number; lng: number} }>;
+    return globalHubs.map((hub) => ({ start: hub, end: dest }));
+  })();
 
   const locationMap: { [key: string]: string } = {
     'Ghana': '加纳',
@@ -82,13 +110,7 @@ export function LocationJobs() {
               <h1 className="text-2xl font-bold">{location}</h1>
             </div>
             <div className="mt-6">
-              <WorldMap
-                lineColor="#60a5fa"
-                dots={[
-                  { start: { lat: 51.5074, lng: -0.1278 }, end: { lat: 5.6037, lng: -0.1870 } }, // London -> Accra
-                  { start: { lat: 40.7128, lng: -74.0060 }, end: { lat: 5.6037, lng: -0.1870 } }, // NYC -> Accra
-                ]}
-              />
+              <WorldMap lineColor="#0ea5e9" dots={dots as any} />
             </div>
           </div>
         </div>
