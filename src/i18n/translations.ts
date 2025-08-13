@@ -126,7 +126,8 @@ export const translations = {
       salary: 'Salary',
       description: 'Job Description',
       workingHours: 'Working Hours',
-      apply: 'Apply Now'
+      apply: 'Apply Now',
+      save: 'Save Job'
     }
   },
   zh: {
@@ -256,7 +257,8 @@ export const translations = {
       salary: '薪资',
       description: '职位描述',
       workingHours: '工作时间',
-      apply: '立即申请'
+      apply: '立即申请',
+      save: '收藏职位'
     }
   },
   hi: {
@@ -363,7 +365,8 @@ export const translations = {
       salary: 'वेतन',
       description: 'कार्य विवरण',
       workingHours: 'कार्य समय',
-      apply: 'अभी आवेदन करें'
+      apply: 'अभी आवेदन करें',
+      save: 'नौकरी सहेजें'
     }
   },
   km: {
@@ -470,7 +473,8 @@ export const translations = {
       salary: 'ប្រាក់ខែ',
       description: 'ការពិពណ៌នាការងារ',
       workingHours: 'ម៉ោងធ្វើការ',
-      apply: 'ដាក់ពាក្យឥឡូវនេះ'
+      apply: 'ដាក់ពាក្យឥឡូវនេះ',
+      save: 'រក្សាទុកការងារ'
     }
   },
   ar: {
@@ -577,7 +581,8 @@ export const translations = {
       salary: 'الراتب',
       description: 'وصف الوظيفة',
       workingHours: 'ساعات العمل',
-      apply: 'تقدم الآن'
+      apply: 'تقدم الآن',
+      save: 'احفظ الوظيفة'
     }
   },
   ja: {
@@ -684,7 +689,8 @@ export const translations = {
       salary: '給与',
       description: '職務内容',
       workingHours: '勤務時間',
-      apply: '今すぐ応募'
+      apply: '今すぐ応募',
+      save: '求人を保存'
     }
   },
   de: {
@@ -796,7 +802,8 @@ export const translations = {
       salary: 'Gehalt',
       description: 'Stellenbeschreibung',
       workingHours: 'Arbeitszeit',
-      apply: 'Jetzt bewerben'
+      apply: 'Jetzt bewerben',
+      save: 'Stelle speichern'
     }
   },
   es: {
@@ -908,7 +915,8 @@ export const translations = {
       salary: 'Salario',
       description: 'Descripción del puesto',
       workingHours: 'Horario de trabajo',
-      apply: 'Postular ahora'
+      apply: 'Postular ahora',
+      save: 'Guardar empleo'
     }
   },
   pt: {
@@ -1020,7 +1028,8 @@ export const translations = {
       salary: 'Salário',
       description: 'Descrição da vaga',
       workingHours: 'Jornada de trabalho',
-      apply: 'Candidatar-se agora'
+      apply: 'Candidatar-se agora',
+      save: 'Salvar vaga'
     }
   },
   fr: {
@@ -1132,7 +1141,8 @@ export const translations = {
       salary: 'Salaire',
       description: 'Description du poste',
       workingHours: 'Heures de travail',
-      apply: 'Postuler maintenant'
+      apply: 'Postuler maintenant',
+      save: 'Enregistrer l\'offre'
     }
   }
 };

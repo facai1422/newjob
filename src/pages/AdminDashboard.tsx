@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
+import { SkeletonLine } from '@/components/ui/skeleton';
 import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -34,7 +34,7 @@ interface Job {
   image_url: string;
   location: string;
   image_urls?: string[];
-  rich_description: any[];
+  rich_description: any; // store as JSON object
 }
 
 type JobForm = {
@@ -45,7 +45,17 @@ type JobForm = {
   image_url: string;
   image_urls?: string[];
   location: string;
-  rich_description: any[];
+  // Rich fields that power user-side cards/modal
+  company?: string;
+  type?: string;
+  openings?: number;
+  requirements?: string[];
+  benefits?: string[];
+  rewards?: string[];
+  postedDate?: string;
+  companyLogo?: string;
+  videoUrl?: string;
+  rich_description: any; // full JSON snapshot for convenience
 };
 
 export function AdminDashboard() {
@@ -82,7 +92,16 @@ export function AdminDashboard() {
     image_url: '',
     image_urls: [],
     location: '',
-    rich_description: [] as any[]
+    company: '',
+    type: 'Full Time',
+    openings: 1,
+    requirements: [],
+    benefits: [],
+    rewards: [],
+    postedDate: '',
+    companyLogo: '',
+    videoUrl: '',
+    rich_description: {}
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -246,33 +265,46 @@ export function AdminDashboard() {
     setJobError(null);
     setJobSaveLoading(true);
     try {
+      // Normalize rich_description JSON
+      const rich: any = {
+        company: jobForm.company,
+        type: jobForm.type,
+        openings: jobForm.openings,
+        requirements: jobForm.requirements,
+        benefits: jobForm.benefits,
+        rewards: jobForm.rewards,
+        postedDate: jobForm.postedDate,
+        companyLogo: jobForm.companyLogo,
+        videoUrl: jobForm.videoUrl
+      };
+      const payload = {
+        title: jobForm.title,
+        salary: jobForm.salary,
+        description: jobForm.description,
+        working_hours: jobForm.working_hours,
+        image_url: jobForm.image_url,
+        image_urls: jobForm.image_urls,
+        location: jobForm.location,
+        rich_description: rich
+      } as any;
       if (editingJob) {
         const { error } = await supabase
           .from('jobs')
-          .update({
-            title: jobForm.title,
-            salary: jobForm.salary,
-            description: jobForm.description,
-            working_hours: jobForm.working_hours,
-            image_url: jobForm.image_url,
-            image_urls: jobForm.image_urls,
-            location: jobForm.location,
-            rich_description: jobForm.rich_description
-          })
+          .update(payload)
           .eq('id', editingJob.id);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('jobs')
-          .insert([{ ...jobForm }]);
+          .insert([payload]);
 
         if (error) throw error;
       }
 
       setIsAddingJob(false);
       setEditingJob(null);
-      setJobForm({ title: '', salary: '', description: '', working_hours: '', image_url: '', image_urls: [], location: '', rich_description: [] as any[] });
+      setJobForm({ title: '', salary: '', description: '', working_hours: '', image_url: '', image_urls: [], location: '', company: '', type: 'Full Time', openings: 1, requirements: [], benefits: [], rewards: [], postedDate: '', companyLogo: '', videoUrl: '', rich_description: {} });
       await fetchJobs();
     } catch (error: any) {
       console.error('Error saving job:', error);
@@ -301,6 +333,7 @@ export function AdminDashboard() {
 
   const startEditJob = (job: Job) => {
     setEditingJob(job);
+    const meta: any = job.rich_description || {};
     setJobForm({
       title: job.title,
       salary: job.salary,
@@ -309,7 +342,16 @@ export function AdminDashboard() {
       image_url: job.image_url || '',
       image_urls: job.image_urls || [],
       location: job.location || '',
-      rich_description: (job.rich_description as any[]) || []
+      company: meta.company || '',
+      type: meta.type || 'Full Time',
+      openings: meta.openings || 1,
+      requirements: meta.requirements || [],
+      benefits: meta.benefits || [],
+      rewards: meta.rewards || [],
+      postedDate: meta.postedDate || '',
+      companyLogo: meta.companyLogo || '',
+      videoUrl: meta.videoUrl || '',
+      rich_description: meta
     });
     setIsAddingJob(true);
   };
@@ -329,10 +371,11 @@ export function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100">
-        <nav className="bg-white border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center" />
-        </nav>
+      <div className="relative min-h-screen">
+        <div className="absolute inset-0 -z-10">
+          <HeroGeometric badge="Admin" title1="Hirely" title2="Dashboard" />
+        </div>
+        <nav className="bg-black/80 backdrop-blur border-b border-white/10 h-16" />
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 [content-visibility:auto] [contain-intrinsic-size:1px_200px]">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -467,6 +510,16 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
+                          <label className="block text-sm font-medium text-white/80">Company</label>
+                          <input
+                            type="text"
+                            value={jobForm.company || ''}
+                            onChange={(e) => setJobForm({ ...jobForm, company: e.target.value })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="Company name"
+                          />
+                        </div>
+                        <div>
                           <label className="block text-sm font-medium text-white/80">Salary</label>
                           <input
                             type="text"
@@ -529,6 +582,92 @@ export function AdminDashboard() {
                             aria-label="Job description"
                             required
                           />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-white/80">Type</label>
+                            <input
+                              type="text"
+                              value={jobForm.type || ''}
+                              onChange={(e) => setJobForm({ ...jobForm, type: e.target.value })}
+                              className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                              placeholder="Full Time / Part Time"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-white/80">Openings</label>
+                            <input
+                              type="number"
+                              min={1}
+                              value={jobForm.openings || 1}
+                              onChange={(e) => setJobForm({ ...jobForm, openings: Number(e.target.value) })}
+                              className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                              placeholder="Openings"
+                              aria-label="Openings"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-white/80">Posted Date</label>
+                            <input
+                              type="text"
+                              value={jobForm.postedDate || ''}
+                              onChange={(e) => setJobForm({ ...jobForm, postedDate: e.target.value })}
+                              className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                              placeholder="2024-01-01"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-white/80">Requirements (comma separated)</label>
+                          <input
+                            type="text"
+                            value={(jobForm.requirements || []).join(', ')}
+                            onChange={(e) => setJobForm({ ...jobForm, requirements: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="Requirement A, Requirement B"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-white/80">Benefits (comma separated)</label>
+                          <input
+                            type="text"
+                            value={(jobForm.benefits || []).join(', ')}
+                            onChange={(e) => setJobForm({ ...jobForm, benefits: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="Benefit A, Benefit B"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-white/80">Rewards (comma separated)</label>
+                          <input
+                            type="text"
+                            value={(jobForm.rewards || []).join(', ')}
+                            onChange={(e) => setJobForm({ ...jobForm, rewards: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="Reward A, Reward B"
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-white/80">Company Logo URL</label>
+                            <input
+                              type="url"
+                              value={jobForm.companyLogo || ''}
+                              onChange={(e) => setJobForm({ ...jobForm, companyLogo: e.target.value })}
+                              className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                              placeholder="https://example.com/logo.png"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-white/80">Intro Video URL</label>
+                            <input
+                              type="url"
+                              value={jobForm.videoUrl || ''}
+                              onChange={(e) => setJobForm({ ...jobForm, videoUrl: e.target.value })}
+                              className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                              placeholder="https://example.com/video.mp4"
+                            />
+                          </div>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-white/80">Working Hours</label>

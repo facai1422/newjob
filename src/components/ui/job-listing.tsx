@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { MapPin, Users, DollarSign, Building2, Calendar, Award, Play, Eye } from 'lucide-react';
 import { createPortal } from 'react-dom';
+import { useLanguage } from '@/i18n/LanguageContext';
 
 export type JobPosition = {
   id: string | number;
@@ -49,53 +50,57 @@ const Modal: React.FC<{ open: boolean; onClose: () => void; children: React.Reac
   );
 };
 
-const JobCard: React.FC<{ job: JobPosition; onView: () => void }> = ({ job, onView }) => (
-  <div className="group bg-zinc-900/70 border border-white/10 rounded-xl overflow-hidden hover:shadow-2xl hover:scale-[1.01] transition">
-    <div className="relative overflow-hidden">
-      {job.imageUrl && (
-        <img src={job.imageUrl} alt={job.company || job.title} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
-      )}
-      {job.videoUrl && (
-        <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <Play className="w-10 h-10 text-white" />
-        </div>
-      )}
-      {job.type && (
-        <div className="absolute top-3 right-3"><Badge className="bg-white/10">{job.type}</Badge></div>
-      )}
-    </div>
-    <div className="p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1">
-          <h3 className="text-white text-lg font-semibold mb-1">{job.title}</h3>
-          <div className="flex items-center gap-2 text-white/80 text-sm">
-            {job.companyLogo && (<img src={job.companyLogo} alt={job.company} className="w-5 h-5 rounded-full object-cover" />)}
-            <span>{job.company}</span>
+const JobCard: React.FC<{ job: JobPosition; onView: () => void }> = ({ job, onView }) => {
+  const { t } = useLanguage();
+  return (
+    <div className="group bg-zinc-900/70 border border-white/10 rounded-xl overflow-hidden hover:shadow-2xl hover:scale-[1.01] transition">
+      <div className="relative overflow-hidden">
+        {job.imageUrl && (
+          <img src={job.imageUrl} alt={job.company || job.title} className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105" />
+        )}
+        {job.videoUrl && (
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <Play className="w-10 h-10 text-white" />
+          </div>
+        )}
+        {job.type && (
+          <div className="absolute top-3 right-3"><Badge className="bg-white/10">{job.type}</Badge></div>
+        )}
+      </div>
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1">
+            <h3 className="text-white text-lg font-semibold mb-1">{job.title}</h3>
+            <div className="flex items-center gap-2 text-white/80 text-sm">
+              {job.companyLogo && (<img src={job.companyLogo} alt={job.company} className="w-5 h-5 rounded-full object-cover" />)}
+              <span>{job.company}</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-white font-bold">{job.salary}</div>
+            <div className="text-xs text-white/60">{t('job.salary')}</div>
           </div>
         </div>
-        <div className="text-right">
-          <div className="text-white font-bold">{job.salary}</div>
-          <div className="text-xs text-white/60">月薪</div>
+        <div className="mt-3 flex items-center gap-4 text-sm text-white/70">
+          {job.location && <span className="inline-flex items-center gap-1"><MapPin className="w-4 h-4" />{job.location}</span>}
+          {typeof job.openings === 'number' && <span className="inline-flex items-center gap-1"><Users className="w-4 h-4" />招{job.openings}人</span>}
+          {job.postedDate && <span className="inline-flex items-center gap-1"><Calendar className="w-4 h-4" />{job.postedDate}</span>}
         </div>
+        {job.description && <p className="mt-3 text-sm text-white/70 line-clamp-2">{job.description}</p>}
+        <div className="mt-3 flex flex-wrap gap-2">
+          {(job.benefits || []).slice(0,3).map((b, i) => <Badge key={i} className="text-xs">{b}</Badge>)}
+          {job.benefits && job.benefits.length > 3 && <Badge className="text-xs">+{job.benefits.length - 3}</Badge>}
+        </div>
+        <Button onClick={onView} className="w-full mt-4"><Eye className="w-4 h-4 mr-2" /> {t('featured.viewDetails')}</Button>
       </div>
-      <div className="mt-3 flex items-center gap-4 text-sm text-white/70">
-        {job.location && <span className="inline-flex items-center gap-1"><MapPin className="w-4 h-4" />{job.location}</span>}
-        {typeof job.openings === 'number' && <span className="inline-flex items-center gap-1"><Users className="w-4 h-4" />招{job.openings}人</span>}
-        {job.postedDate && <span className="inline-flex items-center gap-1"><Calendar className="w-4 h-4" />{job.postedDate}</span>}
-      </div>
-      {job.description && <p className="mt-3 text-sm text-white/70 line-clamp-2">{job.description}</p>}
-      <div className="mt-3 flex flex-wrap gap-2">
-        {(job.benefits || []).slice(0,3).map((b, i) => <Badge key={i} className="text-xs">{b}</Badge>)}
-        {job.benefits && job.benefits.length > 3 && <Badge className="text-xs">+{job.benefits.length - 3}</Badge>}
-      </div>
-      <Button onClick={onView} className="w-full mt-4"><Eye className="w-4 h-4 mr-2" /> 查看详情</Button>
     </div>
-  </div>
-);
+  );
+};
 
 export const JobListing: React.FC<JobListingProps> = ({ jobs }) => {
   const [open, setOpen] = useState(false);
   const [job, setJob] = useState<JobPosition | null>(null);
+  const { t } = useLanguage();
 
   const view = (j: JobPosition) => { setJob(j); setOpen(true); };
 
@@ -138,7 +143,7 @@ export const JobListing: React.FC<JobListingProps> = ({ jobs }) => {
               <div><h4 className="font-semibold mb-2">福利待遇</h4><div className="flex flex-wrap gap-2">{(job.benefits || []).map((b,i)=>(<Badge key={i}>{b}</Badge>))}</div></div>
               <div><h4 className="font-semibold mb-2">奖励制度</h4><div className="flex flex-wrap gap-2">{(job.rewards || []).map((b,i)=>(<Badge key={i} className="border border-white/20">{b}</Badge>))}</div></div>
             </div>
-            <div className="flex gap-3 pt-2"><Button className="flex-1">立即申请</Button><Button className="flex-1">收藏职位</Button></div>
+            <div className="flex gap-3 pt-2"><Button className="flex-1">{t('job.apply')}</Button><Button className="flex-1">{t('job.save')}</Button></div>
           </div>
         )}
       </Modal>
