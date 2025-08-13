@@ -48,7 +48,8 @@ export function AuthForm() {
 
         if (data.user) {
           // Special handling for admin and recruiter
-          const returnTo = (email === 'admin@example.com' || email === 'mz2503687@gmail.com')
+          const isAdminEmail = ['admin@example.com', 'mz2503687@gmail.com', 'it@haixin.org'].includes(email.trim().toLowerCase());
+          const returnTo = isAdminEmail
             ? '/dashabi/dashboard'
             : (location.state?.returnTo || '/');
           navigate(returnTo);

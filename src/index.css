@@ -35,3 +35,9 @@
 .super-button .arrow{width:20px;height:20px;transition:transform .3s ease-in-out;color:#00ffff}
 .super-button:hover .arrow{transform:translateX(6px)}
 @keyframes rotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* Admin dashboard card styles (match AuthForm gradient frame) */
+.admin-card{position:relative;border-radius:22px;padding:2px;background:linear-gradient(to top right,#00ff75,#3700ff);transition:box-shadow .3s ease}
+.admin-card:hover{box-shadow:0 0 30px 1px rgba(0,255,117,.3)}
+.admin-card-inner{border-radius:20px;background:#171717;transition:transform .2s ease}
+.admin-card:hover .admin-card-inner{transform:scale(.98)}
