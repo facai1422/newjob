@@ -5,6 +5,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { ShootingStars } from '@/components/ui/shooting-stars';
 import { ScrollTiltCard } from '@/components/ui/scroll-tilt-card';
+import { WorldMap } from '@/components/ui/world-map';
 import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 
@@ -79,6 +80,15 @@ export function LocationJobs() {
             <div className="flex items-center space-x-2 text-white/90">
               <MapPin className="h-5 w-5" />
               <h1 className="text-2xl font-bold">{location}</h1>
+            </div>
+            <div className="mt-6">
+              <WorldMap
+                lineColor="#60a5fa"
+                dots={[
+                  { start: { lat: 51.5074, lng: -0.1278 }, end: { lat: 5.6037, lng: -0.1870 } }, // London -> Accra
+                  { start: { lat: 40.7128, lng: -74.0060 }, end: { lat: 5.6037, lng: -0.1870 } }, // NYC -> Accra
+                ]}
+              />
             </div>
           </div>
         </div>
