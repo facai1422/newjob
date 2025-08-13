@@ -8,6 +8,7 @@ import { ScrollTiltCard } from '@/components/ui/scroll-tilt-card';
 import { WorldMap } from '@/components/ui/world-map';
 import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
 import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
+import { JobListing } from '@/components/ui/job-listing';
 
 interface Job {
   id: string;
@@ -131,35 +132,27 @@ export function LocationJobs() {
             ))}
           </div>
         ) : jobs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {jobs.map((job) => (
-              <ScrollTiltCard key={job.id}>
-                <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                  <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
-                  {(() => {
-                    const first = (job.image_urls && job.image_urls.length > 0) ? job.image_urls[0] : job.image_url;
-                    return first ? (
-                      <ImageWithSkeleton src={first} alt={job.title} className="w-full h-44 mb-4" imgClassName="w-full h-full object-cover rounded-lg" />
-                    ) : <Skeleton className="w-full h-44 rounded-lg mb-4" />;
-                  })()}
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-semibold text-lg text-white">{job.title}</h3>
-                      <p className="text-white/80">{job.salary}</p>
-                    </div>
-                  </div>
-                  <p className="text-white/70 flex items-center">
-                    <Globe className="h-4 w-4 mr-2" />
-                    {job.working_hours}
-                  </p>
-                    <Link to={`/jobs/${job.id}`} className="mt-4 w-full bg-white/10 text-white py-2 rounded flex items-center justify-center hover:bg-white/20 border border-white/10">
-                    {t('featured.viewDetails')}
-                  </Link>
-                  </div>
-                </div>
-              </ScrollTiltCard>
-            ))}
-          </div>
+          <JobListing
+            jobs={jobs.map((j) => {
+              const meta: any = (j as any).rich_description || {};
+              return {
+                id: j.id,
+                title: j.title,
+                company: meta.company || '',
+                location: (location as string) || '',
+                salary: j.salary,
+                type: meta.type || 'Full Time',
+                openings: meta.openings || 1,
+                description: j.description,
+                requirements: meta.requirements || [],
+                benefits: meta.benefits || [],
+                rewards: meta.rewards || [],
+                imageUrl: (j.image_urls && j.image_urls[0]) || j.image_url,
+                postedDate: meta.postedDate || '',
+                companyLogo: meta.companyLogo || ''
+              };
+            })}
+          />
         ) : (
           <div className="text-center py-12 text-white/80">No jobs found in {location}</div>
         )}
