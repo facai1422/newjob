@@ -236,7 +236,7 @@ export function AdminDashboard() {
     const maxOrder = Math.max(0, ...carousel.map((c: any) => Number(c.sort_order) || 0));
     const { error } = await supabase
       .from('carousel_items')
-      .insert([{ src: newCarouselUrl.trim(), sort_order: maxOrder + 1, is_active: true }]);
+      .insert([{ type: 'image', src: newCarouselUrl.trim(), sort_order: maxOrder + 1, is_active: true }]);
     if (!error) {
       setNewCarouselUrl('');
       await fetchCarousel();
