@@ -70,6 +70,8 @@ export function AdminDashboard() {
   });
   const [isEditingSettings, setIsEditingSettings] = useState(false);
   const [isAddingJob, setIsAddingJob] = useState(false);
+  const [carousel, setCarousel] = useState<any[]>([]);
+  const [newCarouselUrl, setNewCarouselUrl] = useState('');
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [jobSaveLoading, setJobSaveLoading] = useState(false);
   const [jobError, setJobError] = useState<string | null>(null);
@@ -158,7 +160,7 @@ export function AdminDashboard() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      await Promise.all([fetchResumes(), fetchSettings(), fetchJobs()]);
+      await Promise.all([fetchResumes(), fetchSettings(), fetchJobs(), fetchCarousel()]);
     } finally {
       setIsLoading(false);
     }
@@ -214,6 +216,41 @@ export function AdminDashboard() {
     } catch (error) {
       console.error('Error fetching jobs:', error);
     }
+  };
+
+  const fetchCarousel = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('carousel_items')
+        .select('*')
+        .order('sort_order', { ascending: true });
+      if (error) throw error;
+      setCarousel(data || []);
+    } catch (e) {
+      // 表可能尚未创建，忽略错误
+    }
+  };
+
+  const addCarousel = async () => {
+    if (!newCarouselUrl.trim()) return;
+    const maxOrder = Math.max(0, ...carousel.map((c: any) => Number(c.sort_order) || 0));
+    const { error } = await supabase
+      .from('carousel_items')
+      .insert([{ src: newCarouselUrl.trim(), sort_order: maxOrder + 1, is_active: true }]);
+    if (!error) {
+      setNewCarouselUrl('');
+      await fetchCarousel();
+    }
+  };
+
+  const removeCarousel = async (id: string) => {
+    const { error } = await supabase.from('carousel_items').delete().eq('id', id);
+    if (!error) await fetchCarousel();
+  };
+
+  const toggleCarousel = async (id: string, active: boolean) => {
+    const { error } = await supabase.from('carousel_items').update({ is_active: !active }).eq('id', id);
+    if (!error) await fetchCarousel();
   };
 
   const fetchSubAccounts = async () => {};
@@ -845,6 +882,49 @@ export function AdminDashboard() {
                   </div>
                 </div>
               </div>
+            {/* Carousel management */}
+            <div className="admin-card mt-8 text-white">
+              <div className="admin-card-inner px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-semibold text-white">首页轮播图管理</h3>
+                <div className="mt-4 flex gap-2">
+                  <input
+                    type="url"
+                    value={newCarouselUrl}
+                    onChange={(e) => setNewCarouselUrl(e.target.value)}
+                    placeholder="https://example.com/banner.jpg"
+                    className="flex-1 rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                  />
+                  <button className="px-4 py-2 bg-blue-600 rounded-md" onClick={addCarousel}>添加</button>
+                </div>
+                <div className="mt-4 overflow-x-auto">
+                  <table className="min-w-full divide-y divide-white/10">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-sm text-white/70">排序</th>
+                        <th className="px-4 py-2 text-left text-sm text-white/70">图片</th>
+                        <th className="px-4 py-2 text-left text-sm text-white/70">状态</th>
+                        <th className="px-4 py-2 text-right text-sm text-white/70">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/10">
+                      {carousel.map((c: any) => (
+                        <tr key={c.id}>
+                          <td className="px-4 py-2">{c.sort_order}</td>
+                          <td className="px-4 py-2">
+                            <img src={c.src} alt={c.alt || ''} className="w-32 h-16 object-cover rounded" />
+                          </td>
+                          <td className="px-4 py-2">{c.is_active ? '启用' : '停用'}</td>
+                          <td className="px-4 py-2 text-right">
+                            <button className="text-yellow-300 mr-3" onClick={() => toggleCarousel(c.id, c.is_active)}>{c.is_active ? '停用' : '启用'}</button>
+                            <button className="text-red-400" onClick={() => removeCarousel(c.id)}>删除</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
             </div>
           </div>
         </div>

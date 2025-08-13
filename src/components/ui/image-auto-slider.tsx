@@ -1,23 +1,33 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
 
 type Props = {
   className?: string;
 };
 
 export const ImageAutoSlider: React.FC<Props> = ({ className }) => {
-  const images = [
-    'https://cy-747263170.imgix.net/4524242452.png',
-    'https://cy-747263170.imgix.net/缅甸.png',
-    'https://cy-747263170.imgix.net/7455775.png',
-    'https://cy-747263170.imgix.net/213213123.png',
-    'https://cy-747263170.imgix.net/%E6%97%A5%E6%9C%AC.png',
-    'https://cy-747263170.imgix.net/%E7%BE%8E%E5%9B%BD.png',
-    'https://cy-747263170.imgix.net/%E6%9F%AC%E5%9F%94%E5%AF%A8.png',
-    'https://cy-747263170.imgix.net/%E5%8D%B0%E5%BA%A6%E5%B0%BC%E8%A5%BF%E4%BA%9A.png',
-  ];
+  const [images, setImages] = React.useState<string[]>([]);
+  const duplicatedImages = React.useMemo(() => [...images, ...images], [images]);
 
-  const duplicatedImages = [...images, ...images];
+  React.useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const { data, error } = await supabase
+        .from('carousel_items')
+        .select('src,is_active,sort_order')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+      if (!mounted) return;
+      if (error) {
+        // 回退：如果表不存在或错误，使用空列表避免崩溃
+        setImages([]);
+        return;
+      }
+      setImages((data || []).map((d: any) => d.src).filter(Boolean));
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <>
