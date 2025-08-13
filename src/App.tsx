@@ -22,6 +22,8 @@ import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
 // import { Globe as GlobeCanvas } from '@/components/ui/globe';
 // import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { LazyMount } from '@/components/ui/lazy-mount';
+import { usePerf } from '@/hooks/usePerf';
 
 interface JobLocation {
   id: number;
@@ -32,6 +34,7 @@ interface JobLocation {
 
 function App() {
   const { t } = useLanguage();
+  const { lowEndDevice: isLowEndDevice, reducedMotion: prefersReducedMotion } = usePerf();
   // 移除顶部下拉菜单，直接在页头展示操作
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [hasResume, setHasResume] = React.useState(false);
@@ -305,11 +308,20 @@ function App() {
               </div>
               {/* Hero 文本放到搜索框下，轮播图在其下方 */}
               <div className="pt-4">
-                <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
+                {prefersReducedMotion || isLowEndDevice ? (
+                  <div className="container mx-auto px-4 text-center text-white">
+                    <h2 className="text-2xl md:text-4xl font-bold">{t('hero.title')}</h2>
+                    <p className="text-white/70 mt-2">{t('hero.subtitle')}</p>
+                  </div>
+                ) : (
+                  <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
+                )}
               </div>
-              <div className="relative z-10 mt-6 md:mt-8 lg:mt-10">
-                <ImageAutoSlider className="h-64 md:h-80 lg:h-[28rem]" />
-              </div>
+              <LazyMount>
+                <div className="relative z-10 mt-6 md:mt-8 lg:mt-10 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+                  <ImageAutoSlider className="h-64 md:h-80 lg:h-[28rem]" />
+                </div>
+              </LazyMount>
             </div>
 
             {/* 原搜索区块已上移，此处移除 */}
@@ -387,7 +399,7 @@ function App() {
                     springDuration={500}
                   />
                 </div>
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-6 [content-visibility:auto] [contain-intrinsic-size:1px_700px]">
                   {jobLocations.map((location) => (
                     <div key={location.id} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
                       <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
@@ -400,6 +412,9 @@ function App() {
                             src={location.image}
                             alt={t(location.nameKey)}
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -417,20 +432,25 @@ function App() {
               </div>
             </section>
 
-            <section className="py-12">
+            <LazyMount>
+            <section className="py-12 [content-visibility:auto] [contain-intrinsic-size:1px_600px]">
               <div className="container mx-auto px-4">
                 <h2 className="sr-only">{t('whyUs.title')}</h2>
                 <div className="mb-8 flex justify-center">
-                  <RevealText
-                    text={t('whyUs.title')}
-                    textColor="text-white"
-                    overlayColor="text-indigo-400"
-                    fontSize="text-2xl md:text-4xl"
-                    letterDelay={0.06}
-                    overlayDelay={0.04}
-                    overlayDuration={0.35}
-                    springDuration={500}
-                  />
+                  {prefersReducedMotion || isLowEndDevice ? (
+                    <h3 className="text-2xl md:text-4xl text-white font-semibold">{t('whyUs.title')}</h3>
+                  ) : (
+                    <RevealText
+                      text={t('whyUs.title')}
+                      textColor="text-white"
+                      overlayColor="text-indigo-400"
+                      fontSize="text-2xl md:text-4xl"
+                      letterDelay={0.06}
+                      overlayDelay={0.04}
+                      overlayDuration={0.35}
+                      springDuration={500}
+                    />
+                  )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {[{
@@ -469,10 +489,13 @@ function App() {
                 </div>
               </div>
             </section>
+            </LazyMount>
 
-            <div className="mt-16">
-              <NewFooter />
-            </div>
+            <LazyMount>
+              <div className="mt-16 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
+                <NewFooter />
+              </div>
+            </LazyMount>
           </div>
         } />
       </Routes>

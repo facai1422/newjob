@@ -277,7 +277,7 @@ export function AdminDashboard() {
         companyLogo: jobForm.companyLogo,
         videoUrl: jobForm.videoUrl
       };
-      const payload = {
+      const payload: any = {
         title: jobForm.title,
         salary: jobForm.salary,
         description: jobForm.description,
@@ -286,20 +286,40 @@ export function AdminDashboard() {
         image_urls: jobForm.image_urls,
         location: jobForm.location,
         rich_description: rich
-      } as any;
+      };
+      const fallbackPayload = {
+        title: jobForm.title,
+        salary: jobForm.salary,
+        description: jobForm.description,
+        working_hours: jobForm.working_hours
+      };
       if (editingJob) {
-        const { error } = await supabase
+        let { error } = await supabase
           .from('jobs')
           .update(payload)
           .eq('id', editingJob.id);
-
-        if (error) throw error;
+        if (error) {
+          // If schema lacks columns, fallback to base fields only
+          const needsFallback = /column .* does not exist|42703/i.test(error.message || '');
+          if (!needsFallback) throw error;
+          ({ error } = await supabase
+            .from('jobs')
+            .update(fallbackPayload)
+            .eq('id', editingJob.id));
+          if (error) throw error;
+        }
       } else {
-        const { error } = await supabase
+        let { error } = await supabase
           .from('jobs')
           .insert([payload]);
-
-        if (error) throw error;
+        if (error) {
+          const needsFallback = /column .* does not exist|42703/i.test(error.message || '');
+          if (!needsFallback) throw error;
+          ({ error } = await supabase
+            .from('jobs')
+            .insert([fallbackPayload]));
+          if (error) throw error;
+        }
       }
 
       setIsAddingJob(false);
@@ -696,6 +716,10 @@ export function AdminDashboard() {
                             type="submit"
                             disabled={jobSaveLoading}
                             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-60"
+                            onClick={(ev) => {
+                              // 防止外层点击冒泡关闭，保证按钮可响应
+                              ev.stopPropagation();
+                            }}
                           >
                             {jobSaveLoading ? 'Saving...' : (editingJob ? 'Save Changes' : 'Create Job')}
                           </button>
