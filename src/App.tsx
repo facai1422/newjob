@@ -330,7 +330,7 @@ function App() {
                     springDuration={500}
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 [content-visibility:auto] [contain-intrinsic-size:1px_600px]">
                   {jobsLoading && Array.from({ length: 6 }).map((_, i) => (
                     <div key={`s-${i}`} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
                       <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">

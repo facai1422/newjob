@@ -22,6 +22,9 @@ export function ImageWithSkeleton({ src, alt = '', className = '', imgClassName 
       <img
         src={src}
         alt={alt}
+        loading="lazy"
+        decoding="async"
+        fetchPriority="low"
         onLoad={() => setLoaded(true)}
         className={`transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'} ${imgClassName}`}
       />

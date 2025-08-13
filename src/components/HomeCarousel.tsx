@@ -55,7 +55,7 @@ export function HomeCarousel() {
         {list.map((item) => (
           <SwiperSlide key={item.id} className="relative">
             {item.type === 'image' ? (
-              <img src={item.src} alt={item.alt || ''} className="w-full h-full object-cover" />
+              <img src={item.src} alt={item.alt || ''} className="w-full h-full object-cover" loading="lazy" decoding="async" fetchPriority="low" />
             ) : (
               <iframe
                 src={item.src}

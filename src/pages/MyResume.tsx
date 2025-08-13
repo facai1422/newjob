@@ -43,7 +43,7 @@ export function MyResume() {
     <div className="relative min-h-screen">
       <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
       <GeometricBackground />
-      <div className="relative z-10 max-w-5xl mx-auto p-6">
+      <div className="relative z-10 max-w-5xl mx-auto p-6 [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
           <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-10 text-white">
             <div className="flex items-center justify-between mb-6">

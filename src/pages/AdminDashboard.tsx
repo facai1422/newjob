@@ -334,7 +334,7 @@ export function AdminDashboard() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center" />
         </nav>
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 [content-visibility:auto] [contain-intrinsic-size:1px_200px]">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="admin-card">
                 <div className="admin-card-inner p-5">
