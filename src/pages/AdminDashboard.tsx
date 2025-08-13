@@ -443,7 +443,7 @@ export function AdminDashboard() {
                 <ArrowLeft className="h-5 w-5 mr-2" />
                 {t('nav.back')}
               </Link>
-              <h1 className="ml-4 text-xl font-bold text-gray-900">Admin Dashboard</h1>
+              <h1 className="ml-4 text-xl font-bold text-gray-900">{t('admin.dashboard')}</h1>
             </div>
             <div className="flex items-center">
               <button
@@ -488,9 +488,7 @@ export function AdminDashboard() {
             <div className="admin-card mb-8 text-white">
               <div className="admin-card-inner px-4 py-5 sm:p-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg leading-6 font-semibold text-white">
-                    Job Postings
-                  </h3>
+                  <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.jobPostings')}</h3>
                   <button
                     onClick={() => {
                       setIsAddingJob(true);
@@ -500,7 +498,7 @@ export function AdminDashboard() {
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add New Job
+                    {t('admin.addNewJob')}
                   </button>
                 </div>
 
@@ -509,7 +507,7 @@ export function AdminDashboard() {
                     <div className="admin-card p-0 max-w-2xl w-full text-white relative z-[10000] max-h-[85vh] overflow-y-auto">
                       <div className="admin-card-inner p-6">
                       <h3 className="text-lg font-medium text-gray-900 mb-4">
-                        {editingJob ? 'Edit Job Posting' : 'Add New Job Posting'}
+                        {editingJob ? t('admin.editJobPosting') : t('admin.addNewJobPosting')}
                       </h3>
                       {jobError && (
                         <div className="mb-3 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
@@ -518,7 +516,7 @@ export function AdminDashboard() {
                       )}
                       <form onSubmit={handleJobSubmit} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Title</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.title')}</label>
                           <input
                             type="text"
                             value={jobForm.title}
@@ -530,7 +528,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Company</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.company')}</label>
                           <input
                             type="text"
                             value={jobForm.company || ''}
@@ -540,7 +538,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Salary</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.salary')}</label>
                           <input
                             type="text"
                             value={jobForm.salary}
@@ -552,7 +550,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Image URL (primary)</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.imageUrl')}</label>
                           <input
                             type="url"
                             value={jobForm.image_url}
@@ -561,7 +559,7 @@ export function AdminDashboard() {
                             placeholder="https://example.com/image.jpg"
                             aria-label="Image URL"
                           />
-                          <label className="block mt-4 text-sm font-medium text-white/80">Additional Image URLs (comma separated)</label>
+                          <label className="block mt-4 text-sm font-medium text-white/80">{t('admin.addImageUrls')}</label>
                           <input
                             type="text"
                             value={(jobForm.image_urls || []).join(', ')}
@@ -572,7 +570,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Location</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.location')}</label>
                           <select
                             value={jobForm.location}
                             onChange={(e) => setJobForm({ ...jobForm, location: e.target.value })}
@@ -580,7 +578,7 @@ export function AdminDashboard() {
                             aria-label="Location"
                             required
                           >
-                            <option value="">Select Location</option>
+                            <option value="">{t('admin.selectLocation')}</option>
                             <option value="Ghana">Ghana</option>
                             <option value="Cambodia">Cambodia</option>
                             <option value="Malaysia">Malaysia</option>
@@ -592,7 +590,7 @@ export function AdminDashboard() {
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Description</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.description')}</label>
                           <textarea
                             value={jobForm.description}
                             onChange={(e) => setJobForm({ ...jobForm, description: e.target.value })}
@@ -605,7 +603,7 @@ export function AdminDashboard() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white/80">Type</label>
+                            <label className="block text-sm font-medium text-white/80">{t('admin.type')}</label>
                             <input
                               type="text"
                               value={jobForm.type || ''}
@@ -615,7 +613,7 @@ export function AdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white/80">Openings</label>
+                            <label className="block text-sm font-medium text-white/80">{t('admin.openings')}</label>
                             <input
                               type="number"
                               min={1}
@@ -627,7 +625,7 @@ export function AdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white/80">Posted Date</label>
+                            <label className="block text-sm font-medium text-white/80">{t('admin.postedDate')}</label>
                             <input
                               type="text"
                               value={jobForm.postedDate || ''}
@@ -638,7 +636,7 @@ export function AdminDashboard() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Requirements (comma separated)</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.requirements')}</label>
                           <input
                             type="text"
                             value={(jobForm.requirements || []).join(', ')}
@@ -648,7 +646,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Benefits (comma separated)</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.benefits')}</label>
                           <input
                             type="text"
                             value={(jobForm.benefits || []).join(', ')}
@@ -658,7 +656,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Rewards (comma separated)</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.rewards')}</label>
                           <input
                             type="text"
                             value={(jobForm.rewards || []).join(', ')}
@@ -669,7 +667,7 @@ export function AdminDashboard() {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white/80">Company Logo URL</label>
+                            <label className="block text-sm font-medium text-white/80">{t('admin.companyLogo')}</label>
                             <input
                               type="url"
                               value={jobForm.companyLogo || ''}
@@ -679,7 +677,7 @@ export function AdminDashboard() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white/80">Intro Video URL</label>
+                            <label className="block text-sm font-medium text-white/80">{t('admin.videoUrl')}</label>
                             <input
                               type="url"
                               value={jobForm.videoUrl || ''}
@@ -690,7 +688,7 @@ export function AdminDashboard() {
                           </div>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white/80">Working Hours</label>
+                          <label className="block text-sm font-medium text-white/80">{t('admin.workingHours')}</label>
                           <input
                             type="text"
                             value={jobForm.working_hours}
@@ -710,7 +708,7 @@ export function AdminDashboard() {
                             }}
                             className="px-4 py-2 border border-white/30 rounded-md text-white hover:bg-white/10"
                           >
-                            Cancel
+                             {t('admin.cancel')}
                           </button>
                           <button
                             type="submit"
@@ -721,7 +719,7 @@ export function AdminDashboard() {
                               ev.stopPropagation();
                             }}
                           >
-                            {jobSaveLoading ? 'Saving...' : (editingJob ? 'Save Changes' : 'Create Job')}
+                             {jobSaveLoading ? t('admin.saving') : (editingJob ? t('admin.saveChanges') : t('admin.createJob'))}
                           </button>
                         </div>
                       </form>
@@ -735,10 +733,10 @@ export function AdminDashboard() {
                     <table className="min-w-full divide-y divide-white/10">
                       <thead className="bg-transparent">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Title</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Salary</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">Working Hours</th>
-                          <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">Actions</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">{t('admin.tableTitle')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">{t('admin.tableSalary')}</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase tracking-wider">{t('admin.tableWorkingHours')}</th>
+                          <th className="px-6 py-3 text-right text-xs font-medium text-white/70 uppercase tracking-wider">{t('admin.tableActions')}</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent divide-y divide-white/10">
@@ -755,16 +753,16 @@ export function AdminDashboard() {
                               <button
                                 onClick={() => startEditJob(job)}
                                 className="text-blue-400 hover:text-blue-300 mr-4"
-                                aria-label="Edit job"
-                                title="Edit job"
+                                 aria-label={t('admin.editJob')}
+                                 title={t('admin.editJob')}
                               >
                                 <Edit className="h-4 w-4" />
                               </button>
                               <button
                                 onClick={() => handleDeleteJob(job.id)}
                                 className="text-red-400 hover:text-red-300"
-                                aria-label="Delete job"
-                                title="Delete job"
+                                 aria-label={t('admin.deleteJob')}
+                                 title={t('admin.deleteJob')}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </button>
@@ -781,16 +779,12 @@ export function AdminDashboard() {
             <div className="mt-8">
             <div className="admin-card">
               <div className="admin-card-inner px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-semibold text-white">
-                    Customer Service Settings
-                  </h3>
+                <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.settings')}</h3>
                   <div className="mt-5">
                     {isEditingSettings ? (
                       <div className="space-y-4">
                         <div>
-                        <label htmlFor="whatsapp" className="block text-sm font-medium text-white/80">
-                            WhatsApp Link
-                          </label>
+                        <label htmlFor="whatsapp" className="block text-sm font-medium text-white/80">{t('admin.whatsapp')}</label>
                           <input
                             type="text"
                             id="whatsapp"
@@ -801,9 +795,7 @@ export function AdminDashboard() {
                           />
                         </div>
                         <div>
-                        <label htmlFor="telegram" className="block text-sm font-medium text-white/80">
-                            Telegram Link
-                          </label>
+                        <label htmlFor="telegram" className="block text-sm font-medium text-white/80">{t('admin.telegram')}</label>
                           <input
                             type="text"
                             id="telegram"
@@ -832,12 +824,12 @@ export function AdminDashboard() {
                     ) : (
                       <div className="space-y-4">
                         <div>
-                        <h4 className="text-sm font-medium text-white/70">WhatsApp Link</h4>
-                        <p className="mt-1 text-sm text-white">{settings.whatsapp_link || 'Not set'}</p>
+                        <h4 className="text-sm font-medium text-white/70">{t('admin.whatsapp')}</h4>
+                        <p className="mt-1 text-sm text-white">{settings.whatsapp_link || t('admin.notSet')}</p>
                         </div>
                         <div>
-                        <h4 className="text-sm font-medium text-white/70">Telegram Link</h4>
-                        <p className="mt-1 text-sm text-white">{settings.telegram_link || 'Not set'}</p>
+                        <h4 className="text-sm font-medium text-white/70">{t('admin.telegram')}</h4>
+                        <p className="mt-1 text-sm text-white">{settings.telegram_link || t('admin.notSet')}</p>
                         </div>
                         <div className="flex justify-end">
                           <button
@@ -845,7 +837,7 @@ export function AdminDashboard() {
                           className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                           >
                             <Edit className="h-4 w-4 mr-2" />
-                            Edit Settings
+                            {t('admin.editSettings')}
                           </button>
                         </div>
                       </div>
