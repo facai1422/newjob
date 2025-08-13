@@ -308,14 +308,7 @@ function App() {
               </div>
               {/* Hero 文本放到搜索框下，轮播图在其下方 */}
               <div className="pt-4">
-                {prefersReducedMotion ? (
-                  <div className="container mx-auto px-4 text-center text-white">
-                    <h2 className="text-2xl md:text-4xl font-bold">{t('hero.title')}</h2>
-                    <p className="text-white/70 mt-2">{t('hero.subtitle')}</p>
-                  </div>
-                ) : (
-                  <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
-                )}
+                <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
               </div>
               <LazyMount>
                 <div className="relative z-10 mt-6 md:mt-8 lg:mt-10 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
@@ -437,20 +430,16 @@ function App() {
               <div className="container mx-auto px-4">
                 <h2 className="sr-only">{t('whyUs.title')}</h2>
                 <div className="mb-8 flex justify-center">
-                  {prefersReducedMotion ? (
-                    <h3 className="text-2xl md:text-4xl text-white font-semibold">{t('whyUs.title')}</h3>
-                  ) : (
-                    <RevealText
-                      text={t('whyUs.title')}
-                      textColor="text-white"
-                      overlayColor="text-indigo-400"
-                      fontSize="text-2xl md:text-4xl"
-                      letterDelay={0.06}
-                      overlayDelay={0.04}
-                      overlayDuration={0.35}
-                      springDuration={500}
-                    />
-                  )}
+                  <RevealText
+                    text={t('whyUs.title')}
+                    textColor="text-white"
+                    overlayColor="text-indigo-400"
+                    fontSize="text-2xl md:text-4xl"
+                    letterDelay={0.06}
+                    overlayDelay={0.04}
+                    overlayDuration={0.35}
+                    springDuration={500}
+                  />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {[{
