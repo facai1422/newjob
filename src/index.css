@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Auto-animate the glowing search bar without hover/focus */
 .search-autoplay .group div[class*="before:bg-[conic-gradient"]:before {
   animation: spin-slow 6s linear infinite;

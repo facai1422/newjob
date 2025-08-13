@@ -2,6 +2,7 @@
 
 import createGlobe, { type COBEOptions } from "cobe";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePerf, useInView } from "@/hooks/usePerf";
 
 import { cn } from "@/lib/utils";
 
@@ -40,6 +41,8 @@ export function Globe({
   className?: string;
   config?: COBEOptions;
 }) {
+  const { lowEndDevice } = usePerf();
+  const { ref: containerRef, inView } = useInView<HTMLDivElement>('200px');
   let phi = 0;
   let width = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -79,6 +82,7 @@ export function Globe({
   };
 
   useEffect(() => {
+    if (!inView) return;
     window.addEventListener("resize", onResize);
     onResize();
 
@@ -86,15 +90,16 @@ export function Globe({
       ...config,
       width: width * 2,
       height: width * 2,
+      mapSamples: lowEndDevice ? 6000 : config.mapSamples,
       onRender,
     });
 
     setTimeout(() => (canvasRef.current!.style.opacity = "1"));
     return () => globe.destroy();
-  }, []);
+  }, [inView, lowEndDevice]);
 
   return (
-    <div
+    <div ref={containerRef}
       className={cn(
         "absolute inset-0 mx-auto aspect-[1/1] w-full max-w-[600px]",
         className

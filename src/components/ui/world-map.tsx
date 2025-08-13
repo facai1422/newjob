@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
+import { usePerf, useInView } from "@/hooks/usePerf";
 import { motion } from "framer-motion";
 import DottedMap from "dotted-map";
 
@@ -17,10 +18,12 @@ interface MapProps {
 
 export function WorldMap({ dots = [], lineColor = "#0ea5e9", className = "" }: MapProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const { lowEndDevice } = usePerf();
+  const { ref: containerRef, inView } = useInView<HTMLDivElement>('150px');
 
   // Build SVG map once
   const svgMap = useMemo(() => {
-    const map = new DottedMap({ height: 100, grid: "diagonal" });
+    const map = new DottedMap({ height: lowEndDevice ? 70 : 100, grid: "diagonal" });
     return map.getSVG({
       radius: 0.22,
       color: "#FFFFFF40",
@@ -45,7 +48,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9", className = "" }: M
   };
 
   return (
-    <div className={`w-full aspect-[2/1] bg-transparent rounded-lg relative font-sans ${className}`}>
+    <div ref={containerRef} className={`w-full aspect-[2/1] bg-transparent rounded-lg relative font-sans ${className}`}>
       <img
         src={`data:image/svg+xml;utf8,${encodeURIComponent(svgMap)}`}
         className="h-full w-full [mask-image:linear-gradient(to_bottom,transparent,white_10%,white_90%,transparent)] pointer-events-none select-none"
@@ -59,7 +62,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9", className = "" }: M
         viewBox="0 0 800 400"
         className="w-full h-full absolute inset-0 pointer-events-none select-none"
       >
-        {dots.map((dot, i) => {
+        {(inView ? dots : []).map((dot, i) => {
           const startPoint = projectPoint(dot.start.lat, dot.start.lng);
           const endPoint = projectPoint(dot.end.lat, dot.end.lng);
           return (
@@ -86,7 +89,7 @@ export function WorldMap({ dots = [], lineColor = "#0ea5e9", className = "" }: M
           </linearGradient>
         </defs>
 
-        {dots.map((dot, i) => (
+        {(inView ? dots : []).map((dot, i) => (
           <g key={`points-group-${i}`}>
             <g key={`start-${i}`}>
               <circle
