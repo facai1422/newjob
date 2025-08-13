@@ -49,8 +49,8 @@ function FloatingShape({
 
 export function GeometricBackground() {
   return (
-    <div className="fixed inset-0 -z-10 bg-[#030303]">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
+    <div className="fixed inset-0 -z-10 bg-[#0a0a0a]">
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.10] via-transparent to-rose-500/[0.10] blur-2xl" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <FloatingShape delay={0.3} width={600} height={140} rotate={12} gradient="from-indigo-500/[0.15]" className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]" />
         <FloatingShape delay={0.5} width={500} height={120} rotate={-15} gradient="from-rose-500/[0.15]" className="right-[-5%] md:right-[0%] top-[70%] md:top-[75%]" />
@@ -58,7 +58,7 @@ export function GeometricBackground() {
         <FloatingShape delay={0.6} width={200} height={60} rotate={20} gradient="from-amber-500/[0.15]" className="right-[15%] md:right-[20%] top-[10%] md:top-[15%]" />
         <FloatingShape delay={0.7} width={150} height={40} rotate={-25} gradient="from-cyan-500/[0.15]" className="left-[20%] md:left-[25%] top-[5%] md:top-[10%]" />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/70 pointer-events-none" />
     </div>
   );
 }

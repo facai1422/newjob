@@ -72,11 +72,11 @@ function HeroGeometric({
 
   return (
     <div className={cn(
-      "relative w-full flex items-center justify-center overflow-hidden bg-[#030303]",
+      "relative w-full flex items-center justify-center overflow-hidden bg-[#0a0a0a]",
       compact ? "min-h-[14rem] md:min-h-[18rem] lg:min-h-[22rem]" : "min-h-screen",
       className
     )}>
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.05] via-transparent to-rose-500/[0.05] blur-3xl" />
+      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/[0.10] via-transparent to-rose-500/[0.10] blur-2xl" />
 
       <div className="absolute inset-0 overflow-hidden">
         <ElegantShape delay={0.3} width={600} height={140} rotate={12} gradient="from-indigo-500/[0.15]" className="left-[-10%] md:left-[-5%] top-[15%] md:top-[20%]" />
@@ -111,7 +111,7 @@ function HeroGeometric({
         </div>
       </div>
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#030303] via-transparent to-[#030303]/80 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/70 pointer-events-none" />
     </div>
   );
 }

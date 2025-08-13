@@ -79,7 +79,7 @@ export function AdminDashboard() {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com')) {
+      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com' && user.email !== 'it@haixin.org')) {
         navigate('/dashabi/login');
       }
     });
@@ -93,7 +93,7 @@ export function AdminDashboard() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com')) {
+      if (!user || (user.email !== 'admin@example.com' && user.email !== 'mz2503687@gmail.com' && user.email !== 'it@haixin.org')) {
         navigate('/dashabi/login');
         return;
       }
