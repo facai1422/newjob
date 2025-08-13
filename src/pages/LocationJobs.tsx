@@ -5,6 +5,8 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { supabase } from '../lib/supabase';
 import { ShootingStars } from '@/components/ui/shooting-stars';
 import { ScrollTiltCard } from '@/components/ui/scroll-tilt-card';
+import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
+import { ImageWithSkeleton } from '@/components/ui/image-with-skeleton';
 
 interface Job {
   id: string;
@@ -82,7 +84,20 @@ export function LocationJobs() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-white/80">Loading...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
+                <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
+                  <Skeleton className="w-full h-44 rounded-lg mb-4" />
+                  <div className="space-y-2">
+                    <SkeletonLine className="w-2/3" />
+                    <SkeletonLine className="w-1/3" />
+                  </div>
+                  <Skeleton className="mt-4 h-10 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : jobs.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
@@ -92,8 +107,8 @@ export function LocationJobs() {
                   {(() => {
                     const first = (job.image_urls && job.image_urls.length > 0) ? job.image_urls[0] : job.image_url;
                     return first ? (
-                      <img src={first} alt={job.title} className="w-full h-44 object-cover rounded-lg mb-4" />
-                    ) : null;
+                      <ImageWithSkeleton src={first} alt={job.title} className="w-full h-44 mb-4" imgClassName="w-full h-full object-cover rounded-lg" />
+                    ) : <Skeleton className="w-full h-44 rounded-lg mb-4" />;
                   })()}
                   <div className="flex items-start justify-between mb-2">
                     <div>

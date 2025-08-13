@@ -40,6 +40,7 @@ function App() {
     working_hours: string;
   }
   const [jobs, setJobs] = React.useState<Job[]>([]);
+  const [jobsLoading, setJobsLoading] = React.useState<boolean>(false);
   const [search, setSearch] = React.useState('');
   const [jobLocations, setJobLocations] = React.useState<JobLocation[]>([
     {
@@ -146,6 +147,7 @@ function App() {
 
   const fetchJobs = async () => {
     try {
+      setJobsLoading(true);
       let query = supabase.from('jobs').select('*');
 
       // 搜索标题、描述和标签
@@ -162,6 +164,9 @@ function App() {
       if (data) setJobs(data);
     } catch (error) {
       console.error('Error fetching jobs:', error);
+    }
+    finally {
+      setJobsLoading(false);
     }
   };
 
@@ -322,7 +327,19 @@ function App() {
                   />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {jobs.map((job: any) => (
+                  {jobsLoading && Array.from({ length: 6 }).map((_, i) => (
+                    <div key={`s-${i}`} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
+                      <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
+                        <div className="w-full h-44 bg-white/10 rounded-lg mb-4 animate-pulse" />
+                        <div className="space-y-2">
+                          <div className="h-4 w-2/3 bg-white/10 rounded" />
+                          <div className="h-4 w-1/3 bg-white/10 rounded" />
+                        </div>
+                        <div className="mt-4 h-10 bg-white/10 rounded" />
+                      </div>
+                    </div>
+                  ))}
+                  {!jobsLoading && jobs.map((job: any) => (
                     <div key={job.id} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
                       <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
                         <div className="flex items-start justify-between mb-4">

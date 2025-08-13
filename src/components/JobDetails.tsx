@@ -1,4 +1,5 @@
 import React from 'react';
+import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -41,8 +42,27 @@ export function JobDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gray-100">
+        <div className="container mx-auto px-4 py-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <SkeletonLine className="w-1/3 h-8 mb-6" />
+            <div className="space-y-6">
+              <div>
+                <SkeletonLine className="w-1/5 h-5 mb-2" />
+                <SkeletonLine className="w-1/3 h-4" />
+              </div>
+              <div>
+                <SkeletonLine className="w-1/4 h-5 mb-2" />
+                <Skeleton className="h-24 rounded" />
+              </div>
+              <div>
+                <SkeletonLine className="w-1/4 h-5 mb-2" />
+                <SkeletonLine className="w-1/3 h-4" />
+              </div>
+              <Skeleton className="h-12 rounded" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

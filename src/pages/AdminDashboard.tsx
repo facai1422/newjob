@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
 import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -328,8 +329,37 @@ export function AdminDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gray-100">
+        <nav className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center" />
+        </nav>
+        <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="admin-card">
+                <div className="admin-card-inner p-5">
+                  <div className="space-y-2">
+                    <SkeletonLine className="w-1/2 h-4" />
+                    <SkeletonLine className="w-1/3 h-6" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 admin-card">
+            <div className="admin-card-inner px-4 py-5 sm:p-6">
+              <div className="space-y-4">
+                <SkeletonLine className="w-1/4 h-6" />
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center justify-between border-b border-white/10 py-3">
+                    <SkeletonLine className="w-1/3 h-4" />
+                    <SkeletonLine className="w-1/4 h-8" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }

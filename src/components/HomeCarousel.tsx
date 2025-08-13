@@ -1,4 +1,5 @@
 import React from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -15,6 +16,7 @@ interface CarouselItem {
 
 export function HomeCarousel() {
   const [items, setItems] = React.useState<CarouselItem[]>([]);
+  const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     (async () => {
@@ -26,6 +28,7 @@ export function HomeCarousel() {
       setItems(
         (data || []).map((d: any) => ({ id: d.id, type: d.type, src: d.src, alt: d.alt }))
       );
+      setLoading(false);
     })();
   }, []);
 
@@ -37,6 +40,9 @@ export function HomeCarousel() {
 
   return (
     <div className="relative w-full h-[300px] md:h-[500px]">
+      {loading && (
+        <Skeleton className="absolute inset-0 rounded" />
+      )}
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={0}
