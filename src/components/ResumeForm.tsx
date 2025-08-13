@@ -6,6 +6,7 @@ import { Upload, X, File, User, Mail, Phone, MapPin, GraduationCap, Briefcase, A
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { GeometricBackground } from '@/components/ui/geometric-background';
+import { useLanguage } from '../i18n/LanguageContext';
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
   return classes.filter(Boolean).join(" ");
@@ -213,6 +214,7 @@ interface FormData {
 }
 
 export function ResumeForm() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -274,7 +276,7 @@ export function ResumeForm() {
       window.dispatchEvent(new Event('resume:submitted'));
       setTimeout(() => { setSubmitSuccess(false); navigate('/my-resume'); }, 1200);
     } catch (err: any) {
-      setSubmitError(err?.message || '提交失败，请稍后重试');
+      setSubmitError(err?.message || t('auth.genericError'));
     } finally { setIsSubmitting(false); }
   };
 
@@ -299,7 +301,7 @@ export function ResumeForm() {
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-16">
         <div className="flex justify-between items-center mb-6">
           <Link to="/" className="inline-flex items-center text-white/80 hover:text-white">
-            <ArrowLeft className="h-5 w-5 mr-2" /> 返回
+            <ArrowLeft className="h-5 w-5 mr-2" /> {t('nav.back')}
           </Link>
           <button onClick={handleLogout} className="inline-flex items-center text-white/80 hover:text-white">
             <LogOut className="h-5 w-5 mr-2" /> 退出登录
@@ -307,8 +309,8 @@ export function ResumeForm() {
         </div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">加入我们的团队</motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-gray-300 max-w-2xl mx-auto">填写申请表单，开启您的职业新篇章</motion.p>
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{t('resume.submitTitle')}</motion.h1>
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-xl text-gray-300 max-w-2xl mx-auto">{t('resume.formSubtitle')}</motion.p>
           </div>
 
           {submitError && (
@@ -319,55 +321,55 @@ export function ResumeForm() {
 
           <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} onSubmit={onSubmit} className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 md:p-8 space-y-8">
             <div className="space-y-2">
-              <Label className="flex items-center space-x-2"><FileText className="h-4 w-4" /><span>上传简历 *</span></Label>
+              <Label className="flex items-center space-x-2"><FileText className="h-4 w-4" /><span>{t('resume.upload')} *</span></Label>
               <FileUpload onFileSelect={handleFileSelect} maxSize={10 * 1024 * 1024} allowedTypes={['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><MapPin className="h-4 w-4" /><span>国家/地区 *</span></Label>
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><MapPin className="h-4 w-4" /><span>{t('resume.country')} *</span></Label>
                 <Select value={formData.country} onChange={(e) => handleInputChange('country', e.target.value)} required>
-                  <option value="">请选择国家/地区</option>
+                  <option value="">{t('resume.selectCountry')}</option>
                   {countries.map(c => (<option key={c} value={c}>{c}</option>))}
                 </Select>
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><User className="h-4 w-4" /><span>姓名 *</span></Label>
-                <Input type="text" placeholder="请输入您的姓名" value={formData.name} onChange={(e) => handleInputChange('name', e.target.value)} required />
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><User className="h-4 w-4" /><span>{t('resume.fullName')} *</span></Label>
+                <Input type="text" placeholder={t('resume.placeholderName')} value={formData.name} onChange={(e) => handleInputChange('name', e.target.value)} required />
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><GraduationCap className="h-4 w-4" /><span>学历 *</span></Label>
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><GraduationCap className="h-4 w-4" /><span>{t('resume.education')} *</span></Label>
                 <Select value={formData.education} onChange={(e) => handleInputChange('education', e.target.value)} required>
-                  <option value="">请选择学历</option>
+                  <option value="">{t('resume.selectDegree')}</option>
                   {educationLevels.map(level => (<option key={level} value={level}>{level}</option>))}
                 </Select>
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><Mail className="h-4 w-4" /><span>联系邮箱 *</span></Label>
-                <Input type="email" placeholder="请输入您的邮箱" value={formData.email} onChange={(e) => handleInputChange('email', e.target.value)} required />
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><Mail className="h-4 w-4" /><span>{t('resume.email')} *</span></Label>
+                <Input type="email" placeholder={t('resume.placeholderEmail')} value={formData.email} onChange={(e) => handleInputChange('email', e.target.value)} required />
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><Phone className="h-4 w-4" /><span>联系电话 *</span></Label>
-                <Input type="tel" placeholder="请输入您的电话号码" value={formData.phone} onChange={(e) => handleInputChange('phone', e.target.value)} required />
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><Phone className="h-4 w-4" /><span>{t('resume.phone')} *</span></Label>
+                <Input type="tel" placeholder={t('resume.placeholderPhone')} value={formData.phone} onChange={(e) => handleInputChange('phone', e.target.value)} required />
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><Briefcase className="h-4 w-4" /><span>申请职位 *</span></Label>
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><Briefcase className="h-4 w-4" /><span>{t('resume.position')} *</span></Label>
                 <Select value={formData.position} onChange={(e) => handleInputChange('position', e.target.value)} required>
-                  <option value="">请选择申请职位</option>
+                  <option value="">{t('resume.selectPosition')}</option>
                   {positions.map(p => (<option key={p} value={p}>{p}</option>))}
                 </Select>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="space-y-2"><Label>个人介绍 *</Label>
-                <Textarea placeholder="请简要介绍您的个人背景、兴趣爱好等..." value={formData.introduction} onChange={(e) => handleInputChange('introduction', e.target.value)} rows={4} required />
+              <div className="space-y-2"><Label>{t('resume.introduction')} *</Label>
+                <Textarea placeholder={t('resume.placeholderIntroduction')} value={formData.introduction} onChange={(e) => handleInputChange('introduction', e.target.value)} rows={4} required />
               </div>
-              <div className="space-y-2"><Label>工作经验 *</Label>
-                <Textarea placeholder="请详细描述您的工作经历、项目经验等..." value={formData.experience} onChange={(e) => handleInputChange('experience', e.target.value)} rows={5} required />
+              <div className="space-y-2"><Label>{t('resume.experience')} *</Label>
+                <Textarea placeholder={t('resume.placeholderExperience')} value={formData.experience} onChange={(e) => handleInputChange('experience', e.target.value)} rows={5} required />
               </div>
-              <div className="space-y-2"><Label className="flex items-center space-x-2"><Award className="h-4 w-4" /><span>技能/奖项</span></Label>
-                <Textarea placeholder="请列出您的专业技能、获得的奖项、证书等..." value={formData.skills} onChange={(e) => handleInputChange('skills', e.target.value)} rows={4} />
+              <div className="space-y-2"><Label className="flex items-center space-x-2"><Award className="h-4 w-4" /><span>{t('resume.skillsAwards')}</span></Label>
+                <Textarea placeholder={t('resume.placeholderSkills')} value={formData.skills} onChange={(e) => handleInputChange('skills', e.target.value)} rows={4} />
               </div>
             </div>
 
             <div className="pt-6">
               <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg font-semibold">
-                {isSubmitting ? (<motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-5 h-5 border-2 border-black border-t-transparent rounded-full" />) : ('提交申请')}
+                {isSubmitting ? (<motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-5 h-5 border-2 border-black border-t-transparent rounded-full" />) : (t('resume.submit'))}
               </Button>
             </div>
           </motion.form>
