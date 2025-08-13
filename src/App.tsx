@@ -20,6 +20,7 @@ import ImageAutoSlider from '@/components/ui/image-auto-slider';
 import RealismButton from '@/components/ui/realism-button';
 import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
+import { Globe as GlobeCanvas } from '@/components/ui/globe';
 
 interface JobLocation {
   id: number;
@@ -297,6 +298,9 @@ function App() {
                         </span>
                       </span>
                     </button>
+                    <div className="relative w-full max-w-2xl h-[320px] mt-6">
+                      <GlobeCanvas className="top-6" />
+                    </div>
                   </div>
                 </div>
               </div>
