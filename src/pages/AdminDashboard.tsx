@@ -400,10 +400,15 @@ export function AdminDashboard() {
       setSendingNote(true);
       if (!notifyForm.userId || !notifyForm.title || !notifyForm.body) return;
       const { error } = await supabase.from('notifications').insert([{
-        user_id: notifyForm.userId,
+        recipient_id: notifyForm.userId,
+        recipient_type: 'user',
         title: notifyForm.title,
-        body: notifyForm.body,
-        link: notifyForm.link || null
+        message: notifyForm.body,
+        type: 'admin',
+        related_id: null,
+        related_type: null,
+        is_read: false,
+        is_email_sent: false
       }]);
       if (error) throw error;
       setNotifyForm({ userId: '', title: '', body: '', link: '' });
