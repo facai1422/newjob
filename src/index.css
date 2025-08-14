@@ -52,6 +52,16 @@
 .admin-card:hover .admin-card-inner{transform:scale(.98)}
 
 /* Page full-screen loader styles */
+/* Marquee animations (3D testimonials) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - var(--gap))); }
+}
+@keyframes marquee-vertical {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(-100% - var(--gap))); }
+}
+
 .page-loader .loader-wrapper{position:relative;display:flex;align-items:center;justify-content:center;width:180px;aspect-ratio:1/1;font-family:Figtree,sans-serif;font-size:1.6em;font-weight:600;border-radius:50%;background-color:#0004;-webkit-user-select:none;user-select:none}
 .page-loader .loader{position:absolute;top:0;left:0;width:100%;aspect-ratio:1/1;border-radius:inherit;z-index:1;background-color:#c4d0cc22;-webkit-backdrop-filter:blur(40px);backdrop-filter:blur(40px);box-shadow:0 0 10px 0 #fff inset,0 0 4px 4px #f8924e inset,0 0 8px 8px #1ca18477 inset,0 0 20px 2px #0006,0 0 20px 4px #ff0095ee,0 12px 80px 8px #ff295f;-webkit-animation:rotate-anim 4s linear infinite;animation:rotate-anim 4s linear infinite}
 @keyframes rotate-anim{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
