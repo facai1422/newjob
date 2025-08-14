@@ -23,6 +23,7 @@ interface CustomerServiceSettings {
   id?: string;
   whatsapp_link: string;
   telegram_link: string;
+  email?: string;
 }
 
 interface Job {
@@ -66,7 +67,8 @@ export function AdminDashboard() {
   const [settings, setSettings] = useState<CustomerServiceSettings>({
     id: undefined,
     whatsapp_link: '',
-    telegram_link: ''
+    telegram_link: '',
+    email: ''
   });
   const [isEditingSettings, setIsEditingSettings] = useState(false);
   const [isAddingJob, setIsAddingJob] = useState(false);
@@ -198,7 +200,7 @@ export function AdminDashboard() {
         .single();
       
       if (error) throw error;
-      if (data) setSettings({ id: (data as any).id, whatsapp_link: (data as any).whatsapp_link, telegram_link: (data as any).telegram_link });
+      if (data) setSettings({ id: (data as any).id, whatsapp_link: (data as any).whatsapp_link, telegram_link: (data as any).telegram_link, email: (data as any).email || '' });
     } catch (error) {
       console.error('Error fetching settings:', error);
     }
@@ -276,6 +278,7 @@ export function AdminDashboard() {
           .update({
             whatsapp_link: settings.whatsapp_link,
             telegram_link: settings.telegram_link,
+            email: settings.email || '',
             updated_at: new Date().toISOString()
           })
           .eq('id', settings.id);
@@ -286,6 +289,7 @@ export function AdminDashboard() {
           .insert({
             whatsapp_link: settings.whatsapp_link,
             telegram_link: settings.telegram_link,
+            email: settings.email || '',
             updated_at: new Date().toISOString()
           });
         if (error) throw error;
@@ -842,6 +846,17 @@ export function AdminDashboard() {
                             placeholder="https://t.me/your-username"
                           />
                         </div>
+                        <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-white/80">Email</label>
+                          <input
+                            type="email"
+                            id="email"
+                            value={settings.email || ''}
+                            onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                          className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="support@example.com"
+                          />
+                        </div>
                         <div className="flex justify-end space-x-3">
                           <button
                             type="button"
@@ -867,6 +882,10 @@ export function AdminDashboard() {
                         <div>
                         <h4 className="text-sm font-medium text-white/70">{t('admin.telegram')}</h4>
                         <p className="mt-1 text-sm text-white">{settings.telegram_link || t('admin.notSet')}</p>
+                        </div>
+                        <div>
+                        <h4 className="text-sm font-medium text-white/70">Email</h4>
+                        <p className="mt-1 text-sm text-white">{settings.email || t('admin.notSet')}</p>
                         </div>
                         <div className="flex justify-end">
                           <button

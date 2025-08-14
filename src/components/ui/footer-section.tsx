@@ -2,7 +2,8 @@
 import React from 'react';
 import type { ComponentProps, ReactNode } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { Facebook as FacebookIcon, Frame as FrameIcon, Instagram as InstagramIcon, Linkedin as LinkedinIcon, Youtube as YoutubeIcon } from 'lucide-react';
+import { Frame as FrameIcon, Mail as MailIcon, MessageCircle as WhatsAppIcon, Send as TelegramIcon } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 interface FooterLink {
 	title: string;
@@ -15,7 +16,7 @@ interface FooterSectionType {
 	links: FooterLink[];
 }
 
-const footerLinks: FooterSectionType[] = [
+const defaultFooterLinks: FooterSectionType[] = [
 	{
 		label: 'Product',
 		links: [
@@ -43,18 +44,49 @@ const footerLinks: FooterSectionType[] = [
 			{ title: 'Help', href: '/help' },
 		],
 	},
-	{
-		label: 'Social Links',
-		links: [
-			{ title: 'Facebook', href: '#', icon: FacebookIcon },
-			{ title: 'Instagram', href: '#', icon: InstagramIcon },
-			{ title: 'Youtube', href: '#', icon: YoutubeIcon },
-			{ title: 'LinkedIn', href: '#', icon: LinkedinIcon },
-		],
-	},
+    {
+        label: 'Contact',
+        links: [
+            { title: 'WhatsApp', href: '#', icon: WhatsAppIcon },
+            { title: 'Telegram', href: '#', icon: TelegramIcon },
+            { title: 'Email', href: 'mailto:', icon: MailIcon },
+        ],
+    },
 ];
 
 export function Footer() {
+    const [whatsapp, setWhatsapp] = React.useState<string>('');
+    const [telegram, setTelegram] = React.useState<string>('');
+    const [email, setEmail] = React.useState<string>('');
+
+    React.useEffect(() => {
+        (async () => {
+            try {
+                const { data } = await supabase
+                    .from('customer_service_settings')
+                    .select('*')
+                    .limit(1)
+                    .maybeSingle();
+                if (data) {
+                    setWhatsapp((data as any).whatsapp_link || '');
+                    setTelegram((data as any).telegram_link || '');
+                    setEmail((data as any).email || '');
+                }
+            } catch {
+                // ignore
+            }
+        })();
+    }, []);
+
+    const footerLinks: FooterSectionType[] = React.useMemo(() => {
+        const contactLinks: FooterLink[] = [
+            { title: 'WhatsApp', href: whatsapp || '#', icon: WhatsAppIcon },
+            { title: 'Telegram', href: telegram || '#', icon: TelegramIcon },
+            { title: 'Email', href: email ? `mailto:${email}` : 'mailto:', icon: MailIcon },
+        ];
+        return defaultFooterLinks.map((s) => s.label === 'Contact' ? ({ ...s, links: contactLinks }) : s);
+    }, [whatsapp, telegram, email]);
+
     return (
         <footer className="md:rounded-t-6xl relative w-full max-w-6xl mx-auto flex flex-col items-center justify-center rounded-t-4xl border-t border-white/10 bg-zinc-950 bg-[radial-gradient(35%_128px_at_50%_0%,rgba(255,255,255,0.12),transparent)] px-6 py-12 lg:py-16 text-white">
             <div className="absolute top-0 right-1/2 left-1/2 h-px w-1/3 -translate-x-1/2 -translate-y-1/2 rounded-full blur bg-white/20" />
@@ -68,7 +100,7 @@ export function Footer() {
 				</AnimatedContainer>
 
 				<div className="mt-10 grid grid-cols-2 gap-8 md:grid-cols-4 xl:col-span-2 xl:mt-0">
-					{footerLinks.map((section, index) => (
+                    {footerLinks.map((section, index) => (
 						<AnimatedContainer key={section.label} delay={0.1 + index * 0.1}>
                             <div className="mb-10 md:mb-0">
                                 <h3 className="text-xs text-white/80">{section.label}</h3>
