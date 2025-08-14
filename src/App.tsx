@@ -19,6 +19,7 @@ import { Component as ImageAutoSlider } from '@/components/ui/image-auto-slider'
 import RealismButton from '@/components/ui/realism-button';
 import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
+import MinimalistDock from '@/components/ui/minimal-dock';
 // import { Globe as GlobeCanvas } from '@/components/ui/globe';
 // import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { LazyMount } from '@/components/ui/lazy-mount';
@@ -410,6 +411,7 @@ function App() {
                 <NewFooter />
               </div>
             </LazyMount>
+            <MinimalistDock />
           </div>
         } />
       </Routes>
