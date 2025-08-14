@@ -82,7 +82,7 @@ const MinimalistDock: React.FC = () => {
   const dockItems: DockItem[] = [
     { id: 'home', icon: <Home size={20} />, label: 'Home', onClick: () => navigate('/') },
     { id: 'search', icon: <Search size={20} />, label: 'Locations', onClick: () => navigate('/locations') },
-    { id: 'mail', icon: <Mail size={20} />, label: 'Mail', onClick: () => navigate('/dashabi/login') },
+    { id: 'mail', icon: <Mail size={20} />, label: 'Stories', onClick: () => navigate('/testimonials') },
     { id: 'profile', icon: <User size={20} />, label: 'Profile', onClick: () => navigate('/my-resume') },
     // { id: 'settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
