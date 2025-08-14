@@ -22,6 +22,7 @@ import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
 import MinimalistDock from '@/components/ui/minimal-dock';
 import Testimonials from './pages/Testimonials';
+import Profile from './pages/Profile';
 // import { Globe as GlobeCanvas } from '@/components/ui/globe';
 // import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { LazyMount } from '@/components/ui/lazy-mount';
@@ -182,6 +183,7 @@ function App() {
         <Route path="/dashabi/dashboard" element={<AdminDashboard />} />
         <Route path="/locations" element={<Locations />} />
         <Route path="/testimonials" element={<Testimonials />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/" element={
           <div className="min-h-screen">
             <GeometricBackground />

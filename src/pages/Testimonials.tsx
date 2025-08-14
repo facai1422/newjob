@@ -3,9 +3,8 @@ import DemoTestimonials3D from '@/components/ui/demo-3d-testimonials';
 import DiagonalTestimonialsBG from '@/components/ui/diagonal-testimonials-bg';
 import MinimalistDock from '@/components/ui/minimal-dock';
 import { supabase } from '@/lib/supabase';
-import React from 'react';
 
-type Notification = { id: string; title: string; body: string; link?: string; created_at: string; read_at: string | null };
+type Notification = { id: string; title: string; message: string; created_at: string; is_read?: boolean; read_at?: string | null };
 
 export default function Testimonials() {
   const [notifications, setNotifications] = React.useState<Notification[]>([]);
@@ -16,7 +15,12 @@ export default function Testimonials() {
       try {
         // 获取当前用户
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return;
+        if (!user) {
+          // 未登录直接跳转登录页，登录后回到本页
+          const returnTo = encodeURIComponent('/testimonials');
+          window.location.assign(`/dashabi/login?returnTo=${returnTo}`);
+          return;
+        }
 
         // 读取最新简历状态
         const { data: resume } = await supabase
@@ -32,7 +36,7 @@ export default function Testimonials() {
         const { data: notes } = await supabase
           .from('notifications')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('recipient_id', user.id)
           .order('created_at', { ascending: false });
         setNotifications(notes || []);
       } catch {}
@@ -63,13 +67,13 @@ export default function Testimonials() {
                 <p className="text-white/70">No notifications</p>
               ) : (
                 notifications.map((n) => (
-                  <a key={n.id} href={n.link || '#'} className="block rounded-lg border border-white/10 p-4 hover:bg-white/5">
+                  <div key={n.id} className="block rounded-lg border border-white/10 p-4 hover:bg-white/5">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">{n.title}</h4>
                       <span className="text-xs text-white/50">{new Date(n.created_at).toLocaleString()}</span>
                     </div>
-                    <p className="mt-1 text-white/80">{n.body}</p>
-                  </a>
+                    <p className="mt-1 text-white/80">{n.message}</p>
+                  </div>
                 ))
               )}
             </div>
