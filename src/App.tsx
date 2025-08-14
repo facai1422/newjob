@@ -10,6 +10,7 @@ import { LocationJobs } from './pages/LocationJobs';
 import { MyResume } from './pages/MyResume';
 import { AuthForm } from './components/AuthForm';
 import { AdminDashboard } from './pages/AdminDashboard';
+import Locations from './pages/Locations';
 import { supabase } from './lib/supabase';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { GeometricBackground } from '@/components/ui/geometric-background';
@@ -178,6 +179,7 @@ function App() {
         <Route path="/dashabi/login" element={<AuthForm />} />
         <Route path="/my-resume" element={<MyResume />} />
         <Route path="/dashabi/dashboard" element={<AdminDashboard />} />
+        <Route path="/locations" element={<Locations />} />
         <Route path="/" element={
           <div className="min-h-screen">
             <GeometricBackground />
@@ -238,75 +240,7 @@ function App() {
 
             {/* Featured section removed per requirement */}
 
-            <section className="py-12">
-              <div className="container mx-auto px-4">
-                <h2 className="sr-only">{t('locations.title')}</h2>
-                <div className="mb-8 flex justify-center">
-                  <RevealText
-                    text={t('locations.title')}
-                    textColor="text-white"
-                    overlayColor="text-indigo-400"
-                    fontSize="text-2xl md:text-4xl"
-                    letterDelay={0.06}
-                    overlayDelay={0.04}
-                    overlayDuration={0.35}
-                    springDuration={500}
-                  />
-                </div>
-                <div className="flex flex-col gap-6 [content-visibility:auto] [contain-intrinsic-size:1px_700px]">
-                  {jobLocations.map((location) => (
-                    <LazyMount
-                      key={location.id}
-                      height="264px"
-                      fallback={
-                        <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                          <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
-                            <div className="h-64 w-full bg-black/60 animate-pulse relative">
-                              <div className="absolute bottom-0 left-0 right-0 p-6 space-y-2">
-                                <div className="h-6 bg-white/20 rounded w-1/2 animate-pulse" />
-                                <div className="h-4 bg-white/15 rounded w-1/3 animate-pulse" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      }
-                    >
-                      <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                        <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
-                          <Link
-                            to={`/jobs/location/${encodeURIComponent(t(location.nameKey))}`}
-                            className="block h-64 w-full relative group"
-                            aria-label={`View jobs in ${t(location.nameKey)}`}
-                          >
-                          <img
-                            src={location.image}
-                            alt={t(location.nameKey)}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            loading="lazy"
-                            decoding="async"
-                            fetchPriority="low"
-                            style={{
-                              backgroundImage: `url("data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100' height='100' fill='%23333'/%3e%3c/svg%3e")`,
-                              backgroundSize: 'cover',
-                              backgroundPosition: 'center'
-                            }}
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                            <h3 className="text-2xl font-bold mb-2">{t(location.nameKey)}</h3>
-                            <div className="flex items-center text-white/90">
-                              <MapPin className="h-4 w-4 mr-2" />
-                              <span>{location.jobCount} {t('locations.openings')}</span>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </div>
-                    </LazyMount>
-                  ))}
-                </div>
-              </div>
-            </section>
+            {/* 工作地点区域已迁移至 /locations 页面，通过底部导航第二个按钮进入 */}
 
             <LazyMount
               height="600px"
