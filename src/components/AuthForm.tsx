@@ -9,6 +9,8 @@ import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 export function AuthForm() {
   const navigate = useNavigate();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const returnToQuery = searchParams.get('returnTo') || '';
   const { t } = useLanguage();
   const [error, setError] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -34,8 +36,8 @@ export function AuthForm() {
         });
         if (signUpError) throw signUpError;
 
-        // 注册成功，直接回到首页
-        navigate('/');
+        // 注册成功，回到 returnTo 或首页
+        navigate(returnToQuery || '/');
         return;
       } else {
         // For login
@@ -49,10 +51,9 @@ export function AuthForm() {
         if (data.user) {
           // Special handling for admin and recruiter
           const isAdminEmail = ['admin@example.com', 'mz2503687@gmail.com', 'it@haixin.org'].includes(email.trim().toLowerCase());
-          const returnTo = isAdminEmail
-            ? '/dashabi/dashboard'
-            : (location.state?.returnTo || '/');
-          navigate(returnTo);
+          const fromReturnTo = returnToQuery || (location.state as any)?.returnTo || '';
+          const returnTo = isAdminEmail ? '/dashabi/dashboard' : (fromReturnTo || '/');
+          navigate(returnTo, { replace: true });
         }
       }
     } catch (err: any) {

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, File, User, Mail, Phone, MapPin, GraduationCap, Briefcase, Award, FileText, ChevronDown, ArrowLeft, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { GeometricBackground } from '@/components/ui/geometric-background';
+ 
 import { useLanguage } from '../i18n/LanguageContext';
 
 function cn(...classes: (string | undefined | null | boolean)[]): string {
@@ -216,7 +216,7 @@ interface FormData {
 export function ResumeForm() {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -234,14 +234,7 @@ export function ResumeForm() {
     skills: ''
   });
 
-  React.useEffect(() => { (async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate('/dashabi/login', { state: { returnTo: '/submit-resume' } });
-      return;
-    }
-    setIsAuthenticated(true);
-  })(); }, [navigate]);
+  
 
   const handleLogout = async () => { await supabase.auth.signOut(); navigate('/'); };
 
@@ -249,17 +242,68 @@ export function ResumeForm() {
   const handleFileSelect = (file: File) => setFormData(prev => ({ ...prev, resume: file }));
 
   const onSubmit = async (e: React.FormEvent) => {
+    console.log('🔍 Form submit triggered');
     e.preventDefault();
     setSubmitError(null);
+    
+    // 检查是否上传了简历文件
+    if (!formData.resume) {
+      console.log('❌ No resume file uploaded');
+      setSubmitError('请上传简历文件');
+      return;
+    }
+    
+    console.log('✅ Resume file found:', formData.resume.name);
+    
+    // 先检查登录状态，避免未登录时进入 loading 导致"无限转圈"
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      console.log('❌ User not logged in');
+      setIsSubmitting(false);
+      navigate(`/dashabi/login?returnTo=${encodeURIComponent('/submit-resume')}`);
+      return;
+    }
+    
+    console.log('✅ User logged in, starting submission...');
     setIsSubmitting(true);
+    
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/dashabi/login', { state: { returnTo: '/submit-resume' } });
-        return;
+      let resumeFileUrl = null;
+      let resumeFileName = null;
+      let resumeFileSize = null;
+      
+      // 上传简历文件到Supabase Storage
+      if (formData.resume) {
+        const fileExt = formData.resume.name.split('.').pop();
+        const fileName = `${session.user.id}/${Date.now()}.${fileExt}`;
+        
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('resumes')
+          .upload(fileName, formData.resume, {
+            cacheControl: '3600',
+            upsert: false
+          });
+          
+        if (uploadError) {
+          console.log('❌ File upload failed:', uploadError);
+          throw new Error(`文件上传失败: ${uploadError.message}`);
+        }
+        
+        console.log('✅ File uploaded successfully:', uploadData);
+        
+        // 获取文件的公共URL
+        const { data: urlData } = supabase.storage
+          .from('resumes')
+          .getPublicUrl(fileName);
+          
+        resumeFileUrl = urlData.publicUrl;
+        resumeFileName = formData.resume.name;
+        resumeFileSize = formData.resume.size;
       }
+      
       const combinedCover = `国家/地区: ${formData.country}\n申请职位: ${formData.position}\n个人介绍: ${formData.introduction}`;
-      const { error } = await supabase.from('resumes').insert({
+      
+      const resumeData = {
         fullName: formData.name,
         email: formData.email,
         phone: formData.phone,
@@ -267,27 +311,38 @@ export function ResumeForm() {
         experience: formData.experience,
         skills: formData.skills,
         coverLetter: combinedCover,
+        resume_file_url: resumeFileUrl,
+        resume_file_name: resumeFileName,
+        resume_file_size: resumeFileSize,
         user_id: session.user.id,
         status: 'pending',
         submitted_at: new Date().toISOString()
-      });
-      if (error) throw error;
+      };
+      
+      console.log('💾 Inserting resume data:', resumeData);
+      
+      const { error } = await supabase.from('resumes').insert([resumeData]);
+      
+      if (error) {
+        console.log('❌ Database insert failed:', error);
+        throw error;
+      }
+      
+      console.log('✅ Resume data saved successfully');
+      
       setSubmitSuccess(true);
       window.dispatchEvent(new Event('resume:submitted'));
       setTimeout(() => { setSubmitSuccess(false); navigate('/my-resume'); }, 1200);
     } catch (err: any) {
+      console.error('❌ Resume submit error:', err);
       setSubmitError(err?.message || t('auth.genericError'));
-    } finally { setIsSubmitting(false); }
+    } finally {
+      console.log('🏁 Submission process finished');
+      setIsSubmitting(false);
+    }
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="relative min-h-screen">
-        <GeometricBackground />
-        <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
-      </div>
-    );
-  }
+  
 
   const countries = React.useMemo(() => {
     const map: Record<string, string[]> = {
@@ -322,9 +377,9 @@ export function ResumeForm() {
   }, [language]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-800/20 via-transparent to-transparent" />
+    <div className="relative min-h-screen bg-black text-white">
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-gray-900 via-black to-gray-900" />
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-800/20 via-transparent to-transparent" />
 
       <div className="relative z-10 container mx-auto px-4 py-8 md:py-16">
         <div className="flex justify-between items-center mb-6">
@@ -347,7 +402,14 @@ export function ResumeForm() {
             </div>
           )}
 
-          <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} onSubmit={onSubmit} className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 md:p-8 space-y-8">
+          <motion.form 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.3 }} 
+            onSubmit={onSubmit} 
+            className="bg-black/40 backdrop-blur-sm border border-gray-800 rounded-2xl p-6 md:p-8 space-y-8"
+            noValidate={false}
+          >
             <div className="space-y-2">
               <Label className="flex items-center space-x-2"><FileText className="h-4 w-4" /><span>{t('resume.upload')} *</span></Label>
               <FileUpload onFileSelect={handleFileSelect} maxSize={10 * 1024 * 1024} allowedTypes={['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']} />
@@ -393,8 +455,18 @@ export function ResumeForm() {
             </div>
 
             <div className="pt-6">
-              <Button type="submit" disabled={isSubmitting} className="w-full h-12 text-lg font-semibold">
-                {isSubmitting ? (<motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-5 h-5 border-2 border-black border-t-transparent rounded-full" />) : (t('resume.submit'))}
+              <Button 
+                type="submit" 
+                disabled={isSubmitting} 
+                className="w-full h-12 text-lg font-semibold"
+                onClick={() => console.log('🔘 Submit button clicked')}
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center justify-center gap-3">
+                    <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }} className="w-5 h-5 border-2 border-white/80 border-t-transparent rounded-full" />
+                    <span>Submitting...</span>
+                  </div>
+                ) : (t('resume.submit'))}
               </Button>
             </div>
           </motion.form>

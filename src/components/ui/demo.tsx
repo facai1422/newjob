@@ -1,4 +1,5 @@
 import { PulseBeams } from "@/components/ui/pulse-beams";
+import { Component } from "@/components/ui/image-auto-slider";
 
 const beams = [
   {
@@ -23,4 +24,10 @@ function DemoPulseBeams() {
 
 export { DemoPulseBeams };
 
+
+const DemoOne = () => {
+  return <Component />;
+};
+
+export { DemoOne };
 

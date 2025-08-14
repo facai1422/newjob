@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { Building2, Users, BriefcaseIcon, ArrowRight, Globe, Award, TrendingUp, MessageCircle, MapPin } from 'lucide-react';
+import { Users, Award, TrendingUp, MapPin } from 'lucide-react';
 import { useLanguage } from './i18n/LanguageContext';
 import { LanguageSelector } from './components/LanguageSelector';
 // import { HomeCarousel } from './components/HomeCarousel';
@@ -13,10 +13,9 @@ import { AdminDashboard } from './pages/AdminDashboard';
 import { supabase } from './lib/supabase';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { GeometricBackground } from '@/components/ui/geometric-background';
-import SearchComponent from '@/components/ui/animated-glowing-search-bar';
 import { RevealText } from '@/components/ui/reveal-text';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
-import { HomeCarousel } from './components/HomeCarousel';
+import { Component as ImageAutoSlider } from '@/components/ui/image-auto-slider';
 import RealismButton from '@/components/ui/realism-button';
 import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
@@ -37,15 +36,7 @@ function App() {
   // 移除顶部下拉菜单，直接在页头展示操作
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [hasResume, setHasResume] = React.useState(false);
-  interface Job {
-    id: string;
-    title: string;
-    salary: string;
-    working_hours: string;
-  }
-  const [jobs, setJobs] = React.useState<Job[]>([]);
-  const [jobsLoading, setJobsLoading] = React.useState<boolean>(false);
-  const [search, setSearch] = React.useState('');
+  
   const [jobLocations, setJobLocations] = React.useState<JobLocation[]>([
     {
       id: 1,
@@ -96,15 +87,11 @@ function App() {
       jobCount: 0
     }
   ]);
-  const [customerService, setCustomerService] = React.useState({
-    whatsapp_link: '',
-    telegram_link: ''
-  });
+  
 
   React.useEffect(() => {
     checkAuth();
-    fetchJobs();
-    fetchCustomerService();
+    
     fetchJobCounts();
     supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
@@ -149,34 +136,9 @@ function App() {
     }
   };
 
-  const fetchJobs = async () => {
-    try {
-      setJobsLoading(true);
-      let query = supabase.from('jobs').select('*');
+  
 
-      // 搜索标题、描述和标签
-      if (search && search.trim()) {
-        const kw = search.trim();
-        query = query.or(
-          `title.ilike.%${kw}%,description.ilike.%${kw}%,tags.cs.{${kw}}`
-        );
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      if (data) setJobs(data);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-    }
-    finally {
-      setJobsLoading(false);
-    }
-  };
-
-  const doSearch = async () => {
-    await fetchJobs();
-  };
+  
 
   const fetchJobCounts = async () => {
     try {
@@ -199,29 +161,7 @@ function App() {
     }
   };
 
-  const fetchCustomerService = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('customer_service_settings')
-        .select('*')
-        .limit(1)
-        .single();
-      
-      if (error) {
-        console.error('Error fetching customer service settings:', error);
-        return;
-      }
-      
-      if (data) {
-        setCustomerService({
-          whatsapp_link: data.whatsapp_link || '',
-          telegram_link: data.telegram_link || ''
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching customer service settings:', error);
-    }
-  };
+  
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -278,42 +218,21 @@ function App() {
                 </nav>
               </div>
 
-              {/* 搜索框位置：避开顶部导航与按钮区域 */}
+              {/* Hero 区域：移除搜索后，上移并保留顶部留白避免被导航遮挡 */}
               <div className="pt-24 md:pt-28 lg:pt-32">
-                <div className="container mx-auto px-4 py-4">
-                  <div className="flex flex-col items-center gap-3 max-w-4xl mx-auto">
-                    <SearchComponent
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      onKeyDown={(e) => { if (e.key === 'Enter') doSearch(); }}
-                      placeholder={t('hero.searchPlaceholder')}
-                    />
-                    <button
-                      onClick={doSearch}
-                      className="bg-slate-800 h-[56px] z-10 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-sm font-semibold leading-6 text-white inline-flex items-center justify-center"
-                    >
-                      <span className="absolute inset-0 overflow-hidden rounded-full">
-                        <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(56,189,248,0.6)_0%,rgba(56,189,248,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-                      </span>
-                      <span className="relative inline-flex items-center justify-center h-[52px] px-6 rounded-full bg-zinc-950 ring-1 ring-white/10">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-neutral-300 via-neutral-600 to-neutral-300">
-                          {t('hero.searchButton')}
-                        </span>
-                      </span>
-                    </button>
-                    {/* 地球效果已移除 */}
-                  </div>
-                </div>
-              </div>
-              {/* Hero 文本放到搜索框下，轮播图在其下方 */}
-              <div className="pt-4">
                 <HeroGeometric compact className="!bg-transparent" badge="Hirely" title1={t('hero.title')} title2={t('hero.subtitle')} />
               </div>
-              <LazyMount>
-                <div className="relative z-10 mt-6 md:mt-8 lg:mt-10 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
-                  <HomeCarousel />
+              <LazyMount 
+              className="relative z-10 mt-6 md:mt-8 lg:mt-10 [content-visibility:auto] [contain-intrinsic-size:1px_400px]"
+              height="400px"
+              fallback={
+                <div className="h-[400px] bg-black/40 rounded-lg animate-pulse flex items-center justify-center">
+                  <div className="text-white/60">加载中...</div>
                 </div>
-              </LazyMount>
+              }
+            >
+              <ImageAutoSlider />
+            </LazyMount>
             </div>
 
             {/* Featured section removed per requirement */}
@@ -335,13 +254,29 @@ function App() {
                 </div>
                 <div className="flex flex-col gap-6 [content-visibility:auto] [contain-intrinsic-size:1px_700px]">
                   {jobLocations.map((location) => (
-                    <div key={location.id} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                      <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
-                        <Link
-                          to={`/jobs/location/${encodeURIComponent(t(location.nameKey))}`}
-                          className="block h-64 w-full relative group"
-                          aria-label={`View jobs in ${t(location.nameKey)}`}
-                        >
+                    <LazyMount
+                      key={location.id}
+                      height="264px"
+                      fallback={
+                        <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
+                          <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
+                            <div className="h-64 w-full bg-black/60 animate-pulse relative">
+                              <div className="absolute bottom-0 left-0 right-0 p-6 space-y-2">
+                                <div className="h-6 bg-white/20 rounded w-1/2 animate-pulse" />
+                                <div className="h-4 bg-white/15 rounded w-1/3 animate-pulse" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
+                        <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900">
+                          <Link
+                            to={`/jobs/location/${encodeURIComponent(t(location.nameKey))}`}
+                            className="block h-64 w-full relative group"
+                            aria-label={`View jobs in ${t(location.nameKey)}`}
+                          >
                           <img
                             src={location.image}
                             alt={t(location.nameKey)}
@@ -349,6 +284,11 @@ function App() {
                             loading="lazy"
                             decoding="async"
                             fetchPriority="low"
+                            style={{
+                              backgroundImage: `url("data:image/svg+xml,%3csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100' height='100' fill='%23333'/%3e%3c/svg%3e")`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center'
+                            }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
@@ -361,12 +301,37 @@ function App() {
                         </Link>
                       </div>
                     </div>
+                    </LazyMount>
                   ))}
                 </div>
               </div>
             </section>
 
-            <LazyMount>
+            <LazyMount
+              height="600px"
+              fallback={
+                <section className="py-12">
+                  <div className="container mx-auto px-4">
+                    <div className="mb-8 flex justify-center">
+                      <div className="h-12 bg-white/20 rounded w-64 animate-pulse" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="relative h-full rounded-[1.25rem] border border-white/10 p-2 md:rounded-[1.5rem] md:p-3">
+                          <div className="relative flex h-full flex-col items-center justify-between gap-6 overflow-hidden rounded-xl border border-white/10 bg-zinc-950/60 p-8 text-center">
+                            <div className="w-16 h-16 rounded-xl bg-white/20 animate-pulse" />
+                            <div className="space-y-2 w-full">
+                              <div className="h-6 bg-white/20 rounded w-3/4 mx-auto animate-pulse" />
+                              <div className="h-4 bg-white/15 rounded w-full animate-pulse" />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              }
+            >
             <section className="py-12 [content-visibility:auto] [contain-intrinsic-size:1px_600px]">
               <div className="container mx-auto px-4">
                 <h2 className="sr-only">{t('whyUs.title')}</h2>
@@ -421,7 +386,26 @@ function App() {
             </section>
             </LazyMount>
 
-            <LazyMount>
+            <LazyMount
+              height="400px"
+              fallback={
+                <div className="mt-16 bg-black/40 p-8">
+                  <div className="container mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="space-y-4">
+                          <div className="h-5 bg-white/20 rounded w-3/4 animate-pulse" />
+                          <div className="space-y-2">
+                            <div className="h-3 bg-white/15 rounded w-full animate-pulse" />
+                            <div className="h-3 bg-white/15 rounded w-2/3 animate-pulse" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              }
+            >
               <div className="mt-16 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
                 <NewFooter />
               </div>
