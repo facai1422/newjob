@@ -6,6 +6,7 @@ import { GeometricBackground } from '@/components/ui/geometric-background';
 import { RevealText } from '@/components/ui/reveal-text';
 import { LazyMount } from '@/components/ui/lazy-mount';
 import { supabase } from '@/lib/supabase';
+import MinimalistDock from '@/components/ui/minimal-dock';
 
 interface JobLocation {
   id: number;
@@ -118,6 +119,7 @@ export default function Locations() {
           </div>
         </div>
       </section>
+      <MinimalistDock />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { GeometricBackground } from '@/components/ui/geometric-background';
 import DemoTestimonials3D from '@/components/ui/demo-3d-testimonials';
+import MinimalistDock from '@/components/ui/minimal-dock';
 
 export default function Testimonials() {
   return (
@@ -17,6 +18,7 @@ export default function Testimonials() {
           <DemoTestimonials3D />
         </div>
       </div>
+      <MinimalistDock />
     </div>
   );
 }
