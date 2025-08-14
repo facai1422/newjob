@@ -16,14 +16,13 @@ import { GeometricBackground } from '@/components/ui/geometric-background';
 import SearchComponent from '@/components/ui/animated-glowing-search-bar';
 import { RevealText } from '@/components/ui/reveal-text';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
-import ImageAutoSlider from '@/components/ui/image-auto-slider';
+import { HomeCarousel } from './components/HomeCarousel';
 import RealismButton from '@/components/ui/realism-button';
 import LogoutFab from '@/components/ui/logout-fab';
 import { Footer as NewFooter } from '@/components/ui/footer-section';
 // import { Globe as GlobeCanvas } from '@/components/ui/globe';
 // import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { LazyMount } from '@/components/ui/lazy-mount';
-import { usePerf } from '@/hooks/usePerf';
 
 interface JobLocation {
   id: number;
@@ -34,7 +33,7 @@ interface JobLocation {
 
 function App() {
   const { t } = useLanguage();
-  const { lowEndDevice: isLowEndDevice, reducedMotion: prefersReducedMotion } = usePerf();
+  // removed perf gating for hero/whyUs titles
   // 移除顶部下拉菜单，直接在页头展示操作
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [hasResume, setHasResume] = React.useState(false);
@@ -312,7 +311,7 @@ function App() {
               </div>
               <LazyMount>
                 <div className="relative z-10 mt-6 md:mt-8 lg:mt-10 [content-visibility:auto] [contain-intrinsic-size:1px_400px]">
-                  <ImageAutoSlider className="h-64 md:h-80 lg:h-[28rem]" />
+                  <HomeCarousel />
                 </div>
               </LazyMount>
             </div>
