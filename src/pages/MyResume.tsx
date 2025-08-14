@@ -3,13 +3,33 @@ import { Skeleton, SkeletonLine } from '@/components/ui/skeleton';
 import { supabase } from '../lib/supabase';
 import { useLanguage } from '../i18n/LanguageContext';
 import { GeometricBackground } from '@/components/ui/geometric-background';
-import { Mail, Phone, GraduationCap, Briefcase, FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Mail, Phone, GraduationCap, Briefcase, FileText, Clock, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function MyResume() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [resume, setResume] = React.useState<any | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const handleBack = React.useCallback(() => {
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  const TopHeader: React.FC = () => (
+    <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14">
+      <div className="h-full max-w-5xl mx-auto px-4 flex items-center">
+        <button onClick={handleBack} className="inline-flex items-center gap-2 text-white/90 hover:text-white" aria-label={t('nav.back') || '返回'}>
+          <ArrowLeft className="h-5 w-5" />
+          <span className="hidden sm:inline">{t('nav.back') || '返回'}</span>
+        </button>
+      </div>
+    </div>
+  );
 
   React.useEffect(() => {
     (async () => {
@@ -41,9 +61,9 @@ export function MyResume() {
 
   if (loading) return (
     <div className="relative min-h-screen">
-      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
+      <TopHeader />
       <GeometricBackground />
-      <div className="relative z-10 max-w-5xl mx-auto p-6 [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
+      <div className="relative z-10 max-w-5xl mx-auto p-6 pt-20 [content-visibility:auto] [contain-intrinsic-size:1px_900px]">
         <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
           <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-10 text-white">
             <div className="flex items-center justify-between mb-6">
@@ -75,18 +95,18 @@ export function MyResume() {
   );
   if (error) return (
     <div className="relative min-h-screen">
-      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
+      <TopHeader />
       <GeometricBackground />
-      <div className="relative z-10 p-6 text-red-200">{error}</div>
+      <div className="relative z-10 p-6 pt-20 text-red-200">{error}</div>
     </div>
   );
 
   if (!resume) {
     return (
       <div className="relative min-h-screen">
-        <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
+        <TopHeader />
         <GeometricBackground />
-        <div className="relative z-10 p-6 text-white">No resume found.</div>
+        <div className="relative z-10 p-6 pt-20 text-white">No resume found.</div>
       </div>
     );
   }
@@ -118,9 +138,9 @@ export function MyResume() {
 
   return (
     <div className="relative min-h-screen">
-      <div className="absolute inset-x-0 top-0 z-[90] bg-black/80 backdrop-blur border-b border-white/10 h-14" />
+      <TopHeader />
       <GeometricBackground />
-      <div className="relative z-10 max-w-5xl mx-auto p-6">
+      <div className="relative z-10 max-w-5xl mx-auto p-6 pt-20">
         <div className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
           <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-10 text-white">
             {/* Header */}
