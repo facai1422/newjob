@@ -36,12 +36,17 @@ function TestimonialCard({ img, name, username, body, country }: (typeof testimo
   );
 }
 
-export default function DemoTestimonials3D() {
+type Props = { fullscreen?: boolean };
+
+export default function DemoTestimonials3D({ fullscreen = false }: Props) {
   return (
-    <div className="border border-white/10 rounded-lg relative flex h-96 w-full max-w-[1000px] flex-row items-center justify-center overflow-hidden gap-1.5 [perspective:300px] bg-gradient-to-br from-gray-900 via-black to-gray-800">
-      <div
-        className="flex flex-row items-center gap-4 [transform:translateX(-100px)_translateY(0px)_translateZ(-100px)_rotateX(20deg)_rotateY(-10deg)_rotateZ(20deg)]"
-      >
+    <div className={[
+      'relative flex flex-row items-center justify-center overflow-hidden gap-1.5 [perspective:300px]',
+      fullscreen
+        ? 'absolute inset-0 border-0 bg-transparent pointer-events-none'
+        : 'border border-white/10 rounded-lg h-96 w-full max-w-[1000px] bg-gradient-to-br from-gray-900 via-black to-gray-800'
+    ].join(' ')}>
+      <div className="flex flex-row items-center gap-4 [transform:translateX(-100px)_translateY(0px)_translateZ(-100px)_rotateX(20deg)_rotateY(-10deg)_rotateZ(20deg)]">
         <Marquee vertical pauseOnHover repeat={3} className="[--duration:40s]">
           {testimonials.map((review) => (
             <TestimonialCard key={review.username} {...review} />
@@ -62,10 +67,10 @@ export default function DemoTestimonials3D() {
             <TestimonialCard key={review.username} {...review} />
           ))}
         </Marquee>
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-black"></div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black"></div>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black"></div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black"></div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-black/60"></div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-black/60"></div>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black/40"></div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-black/40"></div>
       </div>
     </div>
   );
