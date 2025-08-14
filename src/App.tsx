@@ -316,65 +316,7 @@ function App() {
               </LazyMount>
             </div>
 
-            {/* 原搜索区块已上移，此处移除 */}
-
-            <section className="py-12">
-              <div className="container mx-auto px-4">
-                <h2 className="sr-only">{t('featured.title')}</h2>
-                <div className="mb-8 flex justify-center">
-                  <RevealText
-                    text={t('featured.title')}
-                    textColor="text-white"
-                    overlayColor="text-indigo-400"
-                    fontSize="text-3xl md:text-5xl"
-                    letterDelay={0.06}
-                    overlayDelay={0.04}
-                    overlayDuration={0.35}
-                    springDuration={500}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 [content-visibility:auto] [contain-intrinsic-size:1px_600px]">
-                  {jobsLoading && Array.from({ length: 6 }).map((_, i) => (
-                    <div key={`s-${i}`} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                      <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
-                        <div className="w-full h-44 bg-white/10 rounded-lg mb-4 animate-pulse" />
-                        <div className="space-y-2">
-                          <div className="h-4 w-2/3 bg-white/10 rounded" />
-                          <div className="h-4 w-1/3 bg-white/10 rounded" />
-                        </div>
-                        <div className="mt-4 h-10 bg-white/10 rounded" />
-                      </div>
-                    </div>
-                  ))}
-                  {!jobsLoading && jobs.map((job: any) => (
-                    <div key={job.id} className="border-4 border-[#6C6C6C] p-2 md:p-6 bg-[#222222] rounded-[30px] shadow-2xl">
-                      <div className="h-full w-full overflow-hidden rounded-2xl bg-zinc-900 md:p-4">
-                        <div className="flex items-start justify-between mb-4">
-                          <div>
-                            <h3 className="font-semibold text-lg text-white">{job.title}</h3>
-                            <p className="text-white/80">{job.salary}</p>
-                          </div>
-                          <BriefcaseIcon className="h-6 w-6 text-blue-300" />
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-white/70 flex items-center">
-                            <Globe className="h-4 w-4 mr-2" />
-                            {job.working_hours}
-                          </p>
-                        </div>
-                        <Link 
-                          to={`/jobs/${job.id}`}
-                          className="mt-4 w-full bg-white/10 text-white py-2 rounded flex items-center justify-center hover:bg-white/20 border border-white/10"
-                        >
-                          {t('featured.viewDetails')}
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </section>
+            {/* Featured section removed per requirement */}
 
             <section className="py-12">
               <div className="container mx-auto px-4">
