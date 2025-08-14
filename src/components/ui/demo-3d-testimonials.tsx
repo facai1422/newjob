@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/shadcn/avat
 import { Card, CardContent } from '@/components/ui/shadcn/card';
 import { Marquee } from '@/components/ui/3d-testimonails';
 
-const testimonials = [
+export const testimonials = [
   { name: 'Ava Green', username: '@ava', body: 'Hirely helped me land interviews in days!', img: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop', country: '🇦🇺 Australia' },
   { name: 'Ana Miller', username: '@ana', body: 'The resume flow is smooth and intuitive.', img: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?q=80&w=400&auto=format&fit=crop', country: '🇩🇪 Germany' },
   { name: 'Mateo Rossi', username: '@mat', body: 'Great roles and quick responses from recruiters.', img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop', country: '🇮🇹 Italy' },
@@ -14,7 +14,7 @@ const testimonials = [
   { name: 'Carlos Ray', username: '@carl', body: 'Highly recommend to job seekers!', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop', country: '🇪🇸 Spain' },
 ];
 
-function TestimonialCard({ img, name, username, body, country }: (typeof testimonials)[number]) {
+export function TestimonialCard({ img, name, username, body, country }: (typeof testimonials)[number]) {
   return (
     <Card className="w-50 bg-zinc-900/80 border-white/10 text-white">
       <CardContent>
