@@ -3,7 +3,7 @@ import { SkeletonLine } from '@/components/ui/skeleton';
 import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Users, BriefcaseIcon, BarChart, ArrowLeft, LogOut, Plus, Edit, Trash2 } from 'lucide-react';
+import { Users, BriefcaseIcon, BarChart, ArrowLeft, LogOut, Plus, Edit, Trash2, Send } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 
@@ -77,6 +77,8 @@ export function AdminDashboard() {
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [jobSaveLoading, setJobSaveLoading] = useState(false);
   const [jobError, setJobError] = useState<string | null>(null);
+  const [notifyForm, setNotifyForm] = useState({ userId: '', title: '', body: '', link: '' });
+  const [sendingNote, setSendingNote] = useState(false);
   // const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
   // const [isAddingSubAccount, setIsAddingSubAccount] = useState(false);
   // const [subAccounts, setSubAccounts] = useState<any[]>([]);
@@ -389,6 +391,28 @@ export function AdminDashboard() {
       await fetchJobs();
     } catch (error) {
       console.error('Error deleting job:', error);
+    }
+  };
+
+  const sendNotification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setSendingNote(true);
+      if (!notifyForm.userId || !notifyForm.title || !notifyForm.body) return;
+      const { error } = await supabase.from('notifications').insert([{
+        user_id: notifyForm.userId,
+        title: notifyForm.title,
+        body: notifyForm.body,
+        link: notifyForm.link || null
+      }]);
+      if (error) throw error;
+      setNotifyForm({ userId: '', title: '', body: '', link: '' });
+      alert('Notification sent');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to send');
+    } finally {
+      setSendingNote(false);
     }
   };
 
@@ -942,6 +966,51 @@ export function AdminDashboard() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+
+            {/* Notifications tool */}
+            <div className="admin-card mt-8 text-white">
+              <div className="admin-card-inner px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-semibold text-white flex items-center gap-2"><Send className="h-4 w-4" /> Send Notification</h3>
+                <form onSubmit={sendNotification} className="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Target User ID"
+                    value={notifyForm.userId}
+                    onChange={(e) => setNotifyForm({ ...notifyForm, userId: e.target.value })}
+                    className="rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20 md:col-span-2"
+                    required
+                  />
+                  <input
+                    type="text"
+                    placeholder="Title"
+                    value={notifyForm.title}
+                    onChange={(e) => setNotifyForm({ ...notifyForm, title: e.target.value })}
+                    className="rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                    required
+                  />
+                  <input
+                    type="url"
+                    placeholder="Optional Link"
+                    value={notifyForm.link}
+                    onChange={(e) => setNotifyForm({ ...notifyForm, link: e.target.value })}
+                    className="rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                  />
+                  <textarea
+                    placeholder="Message body"
+                    value={notifyForm.body}
+                    onChange={(e) => setNotifyForm({ ...notifyForm, body: e.target.value })}
+                    className="rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20 md:col-span-3"
+                    rows={3}
+                    required
+                  />
+                  <div className="flex items-end">
+                    <button type="submit" disabled={sendingNote} className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-60">
+                      {sendingNote ? 'Sending...' : 'Send'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
             </div>
