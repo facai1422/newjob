@@ -5,7 +5,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { ArrowLeft, Mail, Lock } from 'lucide-react';
 
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
-import { EmailVerification } from './EmailVerification';
+
 import { LanguageSelector } from './LanguageSelector';
 
 export function AuthForm() {
@@ -20,7 +20,7 @@ export function AuthForm() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [info, setInfo] = React.useState<string | null>(null);
-  const [showEmailVerification, setShowEmailVerification] = React.useState(false);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,43 +29,20 @@ export function AuthForm() {
 
     try {
       if (isRegistering) {
-        // 调用 Edge Function 发送验证码
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-code`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({ email })
+        // 使用Supabase原生邮箱验证
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+          }
         });
 
-        const result = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to send verification code');
+        if (error) {
+          throw error;
         }
 
-        // 处理邮件发送结果
-        if (result.email_sent) {
-          if (result.debug_code) {
-            console.log('验证码:', result.debug_code);
-            setInfo(`验证码已发送！开发模式验证码: ${result.debug_code}`);
-          } else {
-            setInfo(t('auth.verificationCodeSent') + '，请注意查收（包括垃圾邮件文件夹）');
-          }
-        } else {
-          // 邮件发送失败但验证码已生成
-          if (result.debug_code) {
-            console.log('验证码:', result.debug_code);
-            setInfo(`邮件服务暂时不可用，开发模式验证码: ${result.debug_code}`);
-          } else {
-            setError('邮件发送失败，请稍后重试或联系客服');
-            return;
-          }
-        }
-
-        // 显示邮箱验证界面
-        setShowEmailVerification(true);
+        setInfo(t('auth.confirmationSent'));
         return;
       } else {
         // For login
@@ -121,17 +98,7 @@ export function AuthForm() {
     }
   };
 
-  const handleVerificationComplete = () => {
-    // 验证成功后跳转
-    navigate(returnToQuery || '/');
-  };
 
-  const handleBackToForm = () => {
-    // 返回注册表单
-    setShowEmailVerification(false);
-    setError(null);
-    setInfo(null);
-  };
 
   // Google 登录
   const handleGoogleSignIn = async () => {
@@ -181,14 +148,7 @@ export function AuthForm() {
       </div>
       
       <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        {showEmailVerification ? (
-          <EmailVerification
-            email={email}
-            password={password}
-            onVerificationComplete={handleVerificationComplete}
-            onBack={handleBackToForm}
-          />
-        ) : (
+
         <div className="max-w-md w-full space-y-6">
           <div className="relative group rounded-[22px] p-[2px] bg-gradient-to-tr from-[#00ff75] to-[#3700ff] transition-all duration-300 hover:shadow-[0_0_30px_1px_rgba(0,255,117,0.3)]">
             <div className="rounded-[20px] bg-[#171717] transition-transform duration-200 group-hover:scale-[0.98]">
@@ -312,7 +272,6 @@ export function AuthForm() {
             </div>
           </div>
         </div>
-        )}
       </div>
     </div>
   );

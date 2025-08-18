@@ -23,7 +23,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [code, setCode] = useState(['', '', '', '', '', '']);
+
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -32,17 +32,9 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
   const [initialCanvasVisible, setInitialCanvasVisible] = useState(true);
   const [reverseCanvasVisible, setReverseCanvasVisible] = useState(false);
   
-  // 引用
-  const codeInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  // 聚焦到验证码输入框
-  useEffect(() => {
-    if (step === "code") {
-      setTimeout(() => {
-        codeInputRefs.current[0]?.focus();
-      }, 500);
-    }
-  }, [step]);
+
+
 
   // 处理邮箱提交
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -52,41 +44,21 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
 
     try {
       if (isRegistering) {
-        // 发送验证码
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-code`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-          },
-          body: JSON.stringify({ email })
+        // 使用Supabase原生邮箱验证
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+          }
         });
 
-        const result = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(result.error || '发送验证码失败');
+        if (error) {
+          throw error;
         }
 
-        // 处理邮件发送结果
-        if (result.email_sent) {
-          if (result.debug_code) {
-            console.log('验证码:', result.debug_code);
-            setInfo(`验证码已发送！开发模式验证码: ${result.debug_code}`);
-          } else {
-            setInfo('验证码已发送到您的邮箱，请注意查收（包括垃圾邮件文件夹）');
-          }
-        } else {
-          // 邮件发送失败但验证码已生成
-          if (result.debug_code) {
-            console.log('验证码:', result.debug_code);
-            setInfo(`邮件服务暂时不可用，开发模式验证码: ${result.debug_code}`);
-          } else {
-            setError('邮件发送失败，请稍后重试或联系客服');
-            return;
-          }
-        }
-
+        setInfo(t('auth.confirmationSent'));
+        // 跳到验证页面，显示邮箱验证提示
         setStep("code");
       } else {
         // 普通登录
@@ -116,115 +88,37 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
     }
   };
 
-  // 处理验证码输入
-  const handleCodeChange = (index: number, value: string) => {
-    if (value.length <= 1) {
-      const newCode = [...code];
-      newCode[index] = value;
-      setCode(newCode);
-      
-      if (value && index < 5) {
-        codeInputRefs.current[index + 1]?.focus();
-      }
-      
-      if (index === 5 && value) {
-        const isComplete = newCode.every(digit => digit.length === 1);
-        if (isComplete) {
-          handleCodeSubmit(newCode.join(''));
-        }
-      }
-    }
-  };
-
-  // 处理验证码提交
-  const handleCodeSubmit = async (fullCode: string) => {
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      // 验证码验证并创建用户
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ email, code: fullCode, password })
-      });
-
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || '验证码错误');
-      }
-
-      // 动画效果
-      setReverseCanvasVisible(true);
-      setTimeout(() => {
-        setInitialCanvasVisible(false);
-      }, 50);
-      
-      setTimeout(() => {
-        setStep("success");
-        setTimeout(() => {
-          navigate(returnToQuery || '/');
-        }, 2000);
-      }, 2000);
-    } catch (err: any) {
-      console.error('Verification error:', err);
-      setError(err?.message || '验证失败');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // 键盘导航
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !code[index] && index > 0) {
-      codeInputRefs.current[index - 1]?.focus();
-    }
-  };
-
   // 返回邮箱步骤
   const handleBackToEmail = () => {
     setStep("email");
-    setCode(['', '', '', '', '', '']);
     setError(null);
     setInfo(null);
     setReverseCanvasVisible(false);
     setInitialCanvasVisible(true);
   };
 
-  // 重发验证码
+  // 重发确认邮件
   const handleResendCode = async () => {
     setError(null);
     setInfo(null);
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-verification-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-        },
-        body: JSON.stringify({ email })
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+        }
       });
 
-      const result = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(result.error || '重发失败');
+      if (error) {
+        throw error;
       }
 
-      if (result.debug_code) {
-        console.log('新验证码:', result.debug_code);
-        setInfo(`验证码已重发！开发模式验证码: ${result.debug_code}`);
-      } else {
-        setInfo('验证码已重新发送');
-      }
+      setInfo(t('auth.confirmationSent'));
     } catch (err: any) {
-      setError(err?.message || '重发失败');
+      setError(err?.message || t('auth.resendFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -414,8 +308,8 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 className="space-y-6 text-center"
               >
                 <div className="space-y-1">
-                  <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">{t('auth.enterCode')}</h1>
-                  <p className="text-[1.25rem] text-white/50 font-light">{t('auth.weVeSentCode')} {email}</p>
+                  <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">{t('auth.verifyEmail')}</h1>
+                  <p className="text-[1.25rem] text-white/50 font-light">{t('auth.verificationCodeSentTo')} {email}</p>
                 </div>
 
                 {/* 错误和信息提示 */}
@@ -431,34 +325,17 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 )}
                 
                 <div className="w-full">
-                  <div className="relative rounded-full py-4 px-5 border border-white/10 bg-transparent">
-                    <div className="flex items-center justify-center">
-                      {code.map((digit, i) => (
-                        <div key={i} className="flex items-center">
-                          <div className="relative">
-                            <input
-                              ref={(el) => {
-                                codeInputRefs.current[i] = el;
-                              }}
-                              type="text"
-                              inputMode="numeric"
-                              pattern="[0-9]*"
-                              maxLength={1}
-                              value={digit}
-                              onChange={e => handleCodeChange(i, e.target.value)}
-                              onKeyDown={e => handleKeyDown(i, e)}
-                              className="w-8 text-center text-xl bg-transparent text-white border-none focus:outline-none focus:ring-0 appearance-none [caret-color:transparent]"
-                              title={`${t('auth.enterCode')} ${i + 1}`}
-                            />
-                            {!digit && (
-                              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
-                                <span className="text-xl text-white/30">0</span>
-                              </div>
-                            )}
-                          </div>
-                          {i < 5 && <span className="text-white/20 text-xl">|</span>}
-                        </div>
-                      ))}
+                  <div className="relative rounded-lg py-6 px-5 border border-white/10 bg-white/5 backdrop-blur">
+                    <div className="flex flex-col items-center space-y-4">
+                      <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center">
+                        <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-white/70">请检查您的邮箱并点击确认链接</p>
+                        <p className="text-sm text-white/50 mt-2">确认后会自动跳转到登录页面</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -478,22 +355,12 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 <div className="flex w-full gap-3">
                   <motion.button 
                     onClick={handleBackToEmail}
-                    className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-[30%]"
+                    className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-full"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
                     {t('auth.backToLogin')}
-                  </motion.button>
-                  <motion.button 
-                    disabled={!code.every(d => d !== "") || isLoading}
-                    className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
-                      code.every(d => d !== "") && !isLoading
-                      ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer" 
-                      : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
-                    }`}
-                  >
-                    {isLoading ? t('auth.verifying') : t('auth.verifyAndContinue')}
                   </motion.button>
                 </div>
               </motion.div>
