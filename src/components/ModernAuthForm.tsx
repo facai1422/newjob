@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { supabase } from '../lib/supabase';
 import { useLanguage } from '../i18n/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 import { CanvasRevealEffect } from './ui/sign-in-flow-1';
 
 interface ModernAuthFormProps {
@@ -292,6 +293,11 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
         <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-black to-transparent" />
       </div>
 
+      {/* 顶部语言选择器 */}
+      <div className="absolute top-6 right-6 z-20">
+        <LanguageSelector />
+      </div>
+
       {/* 内容层 */}
       <div className="relative z-10 flex flex-col flex-1 items-center justify-center px-4">
         <div className="w-full max-w-sm">
@@ -307,10 +313,10 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
               >
                 <div className="space-y-1">
                   <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">
-                    {isRegistering ? '创建账户' : '欢迎回来'}
+                    {isRegistering ? t('auth.createAccount') : t('auth.welcomeBack')}
                   </h1>
                   <p className="text-[1.8rem] text-white/70 font-light">
-                    {isRegistering ? '加入我们的平台' : '登录您的账户'}
+                    {isRegistering ? t('auth.joinOurPlatform') : t('auth.signInToAccount')}
                   </p>
                 </div>
                 
@@ -332,12 +338,12 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full py-3 px-4 transition-colors"
                   >
                     <span className="text-lg">G</span>
-                    <span>使用 Google {isRegistering ? '注册' : '登录'}</span>
+                    <span>{t('auth.continueWithGoogle')}</span>
                   </button>
                   
                   <div className="flex items-center gap-4">
                     <div className="h-px bg-white/10 flex-1" />
-                    <span className="text-white/40 text-sm">或</span>
+                    <span className="text-white/40 text-sm">{t('auth.orContinueWith')}</span>
                     <div className="h-px bg-white/10 flex-1" />
                   </div>
                   
@@ -345,7 +351,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     <div className="relative">
                       <input 
                         type="email" 
-                        placeholder="请输入邮箱地址"
+                        placeholder={t('auth.enterEmailAddress')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center bg-transparent"
@@ -357,7 +363,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                       <div className="relative">
                         <input 
                           type="password" 
-                          placeholder="请输入密码"
+                          placeholder={t('auth.enterPassword')}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center bg-transparent"
@@ -370,7 +376,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                       <div className="relative">
                         <input 
                           type="password" 
-                          placeholder="请设置密码"
+                          placeholder={t('auth.enterPassword')}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center bg-transparent"
@@ -385,7 +391,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                       disabled={isLoading}
                       className="w-full rounded-full bg-white text-black font-medium py-3 hover:bg-white/90 transition-colors disabled:opacity-50"
                     >
-                      {isLoading ? '处理中...' : (isRegistering ? '发送验证码' : '登录')}
+                      {isLoading ? t('auth.processing') : (isRegistering ? t('auth.continue') : t('auth.signIn'))}
                     </button>
                   </form>
 
@@ -394,7 +400,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     onClick={() => setIsRegistering(!isRegistering)}
                     className="text-sm text-white/50 hover:text-white/70 transition-colors"
                   >
-                    {isRegistering ? '已有账户？立即登录' : '没有账户？立即注册'}
+                    {isRegistering ? t('auth.switchToLogin') : t('auth.switchToRegister')}
                   </button>
                 </div>
               </motion.div>
@@ -408,8 +414,8 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 className="space-y-6 text-center"
               >
                 <div className="space-y-1">
-                  <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">我们发送了验证码</h1>
-                  <p className="text-[1.25rem] text-white/50 font-light">请输入6位验证码</p>
+                  <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">{t('auth.enterCode')}</h1>
+                  <p className="text-[1.25rem] text-white/50 font-light">{t('auth.weVeSentCode')} {email}</p>
                 </div>
 
                 {/* 错误和信息提示 */}
@@ -442,7 +448,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                               onChange={e => handleCodeChange(i, e.target.value)}
                               onKeyDown={e => handleKeyDown(i, e)}
                               className="w-8 text-center text-xl bg-transparent text-white border-none focus:outline-none focus:ring-0 appearance-none [caret-color:transparent]"
-                              title={`验证码第${i + 1}位`}
+                              title={`${t('auth.enterCode')} ${i + 1}`}
                             />
                             {!digit && (
                               <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
@@ -465,7 +471,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
                   >
-                    重新发送验证码
+                    {t('auth.didntReceiveCode')} {t('auth.resend')}
                   </motion.button>
                 </div>
                 
@@ -477,7 +483,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
-                    返回
+                    {t('auth.backToLogin')}
                   </motion.button>
                   <motion.button 
                     disabled={!code.every(d => d !== "") || isLoading}
@@ -487,7 +493,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                       : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
                     }`}
                   >
-                    {isLoading ? '验证中...' : '继续'}
+                    {isLoading ? t('auth.verifying') : t('auth.verifyAndContinue')}
                   </motion.button>
                 </div>
               </motion.div>
@@ -501,9 +507,9 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
               >
                 <div className="space-y-1">
                   <h1 className="text-[2.5rem] font-bold leading-[1.1] tracking-tight text-white">
-                    {isRegistering ? '注册成功！' : '登录成功！'}
+                    {t('auth.accountCreated')}
                   </h1>
-                  <p className="text-[1.25rem] text-white/50 font-light">欢迎加入</p>
+                  <p className="text-[1.25rem] text-white/50 font-light">{t('auth.welcomeToHirely')}</p>
                 </div>
                 
                 <motion.div 
@@ -525,7 +531,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                   transition={{ delay: 1 }}
                   className="text-white/50 text-sm"
                 >
-                  正在跳转...
+                  {t('auth.redirecting')}
                 </motion.div>
               </motion.div>
             )}

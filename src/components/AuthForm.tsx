@@ -6,6 +6,7 @@ import { ArrowLeft, Mail, Lock } from 'lucide-react';
 
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 import { EmailVerification } from './EmailVerification';
+import { LanguageSelector } from './LanguageSelector';
 
 export function AuthForm() {
   const navigate = useNavigate();
@@ -167,7 +168,7 @@ export function AuthForm() {
       <div className="absolute inset-0 -z-10">
         <HeroGeometric badge="Hirely" title1="Welcome" title2="Sign in / Register" />
       </div>
-      <div className="p-4">
+      <div className="p-4 flex justify-between items-start">
         <Link 
           to="/" 
           className="inline-flex items-center text-white hover:text-blue-100"
@@ -175,6 +176,8 @@ export function AuthForm() {
           <ArrowLeft className="h-5 w-5 mr-2" />
           {t('nav.back')}
         </Link>
+        
+        <LanguageSelector />
       </div>
       
       <div className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
