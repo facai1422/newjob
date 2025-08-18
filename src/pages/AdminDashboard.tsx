@@ -879,133 +879,7 @@ export function AdminDashboard() {
               </div>
             </div>
 
-            <div className="mt-8">
-            <div className="admin-card">
-              <div className="admin-card-inner px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.settings')}</h3>
-                  <div className="mt-5">
-                    {isEditingSettings ? (
-                      <div className="space-y-4">
-                        <div>
-                        <label htmlFor="whatsapp" className="block text-sm font-medium text-white/80">{t('admin.whatsapp')}</label>
-                          <input
-                            type="text"
-                            id="whatsapp"
-                            value={settings.whatsapp_link}
-                            onChange={(e) => setSettings({ ...settings, whatsapp_link: e.target.value })}
-                          className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
-                            placeholder="https://wa.me/your-number"
-                          />
-                        </div>
-                        <div>
-                        <label htmlFor="telegram" className="block text-sm font-medium text-white/80">{t('admin.telegram')}</label>
-                          <input
-                            type="text"
-                            id="telegram"
-                            value={settings.telegram_link}
-                            onChange={(e) => setSettings({ ...settings, telegram_link: e.target.value })}
-                          className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
-                            placeholder="https://t.me/your-username"
-                          />
-                        </div>
-                        <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-white/80">Email</label>
-                          <input
-                            type="email"
-                            id="email"
-                            value={settings.email || ''}
-                            onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                          className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
-                            placeholder="support@example.com"
-                          />
-                        </div>
-                        <div className="flex justify-end space-x-3">
-                          <button
-                            type="button"
-                            onClick={() => setIsEditingSettings(false)}
-                          className="px-4 py-2 border border-white/30 rounded-md text-white hover:bg-white/10"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={handleSettingsUpdate}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                          >
-                            Save Changes
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div>
-                        <h4 className="text-sm font-medium text-white/70">{t('admin.whatsapp')}</h4>
-                        <p className="mt-1 text-sm text-white">{settings.whatsapp_link || t('admin.notSet')}</p>
-                        </div>
-                        <div>
-                        <h4 className="text-sm font-medium text-white/70">{t('admin.telegram')}</h4>
-                        <p className="mt-1 text-sm text-white">{settings.telegram_link || t('admin.notSet')}</p>
-                        </div>
-                        <div>
-                        <h4 className="text-sm font-medium text-white/70">Email</h4>
-                        <p className="mt-1 text-sm text-white">{settings.email || t('admin.notSet')}</p>
-                        </div>
-                        <div className="flex justify-end">
-                          <button
-                            onClick={() => setIsEditingSettings(true)}
-                          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
-                            {t('admin.editSettings')}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            {/* Carousel management */}
-            <div className="admin-card mt-8 text-white">
-              <div className="admin-card-inner px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-semibold text-white">首页轮播图管理</h3>
-                <div className="mt-4 flex gap-2">
-                  <input
-                    type="url"
-                    value={newCarouselUrl}
-                    onChange={(e) => setNewCarouselUrl(e.target.value)}
-                    placeholder="https://example.com/banner.jpg"
-                    className="flex-1 rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
-                  />
-                  <button className="px-4 py-2 bg-blue-600 rounded-md" onClick={addCarousel}>添加</button>
-                </div>
-                <div className="mt-4 overflow-x-auto">
-                  <table className="min-w-full divide-y divide-white/10">
-                    <thead>
-                      <tr>
-                        <th className="px-4 py-2 text-left text-sm text-white/70">排序</th>
-                        <th className="px-4 py-2 text-left text-sm text-white/70">图片</th>
-                        <th className="px-4 py-2 text-left text-sm text-white/70">状态</th>
-                        <th className="px-4 py-2 text-right text-sm text-white/70">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/10">
-                      {carousel.map((c: any) => (
-                        <tr key={c.id}>
-                          <td className="px-4 py-2">{c.sort_order}</td>
-                          <td className="px-4 py-2">
-                            <img src={c.src} alt={c.alt || ''} className="w-32 h-16 object-cover rounded" />
-                          </td>
-                          <td className="px-4 py-2">{c.is_active ? '启用' : '停用'}</td>
-                          <td className="px-4 py-2 text-right">
-                            <button className="text-yellow-300 mr-3" onClick={() => toggleCarousel(c.id, c.is_active)}>{c.is_active ? '停用' : '启用'}</button>
-                            <button className="text-red-400" onClick={() => removeCarousel(c.id)}>删除</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+
 
             {/* Notifications tool */}
             <div className="admin-card mt-8 text-white">
@@ -1086,10 +960,131 @@ export function AdminDashboard() {
           {/* 系统设置标签页 */}
           {activeTab === 'settings' && (
             <div className="space-y-6">
+              {/* 客服设置 */}
               <div className="admin-card">
                 <div className="admin-card-inner px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.settings')}</h3>
-                  <p className="text-white/80 mt-2">系统设置功能已移至此标签页 - 包括客服设置、轮播图管理等</p>
+                  <h3 className="text-lg leading-6 font-semibold text-white">客服设置</h3>
+                  <div className="mt-5">
+                    {isEditingSettings ? (
+                      <div className="space-y-4">
+                        <div>
+                          <label htmlFor="whatsapp" className="block text-sm font-medium text-white/80">WhatsApp 链接</label>
+                          <input
+                            type="text"
+                            id="whatsapp"
+                            value={settings.whatsapp_link}
+                            onChange={(e) => setSettings({ ...settings, whatsapp_link: e.target.value })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="https://wa.me/your-number"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="telegram" className="block text-sm font-medium text-white/80">Telegram 链接</label>
+                          <input
+                            type="text"
+                            id="telegram"
+                            value={settings.telegram_link}
+                            onChange={(e) => setSettings({ ...settings, telegram_link: e.target.value })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="https://t.me/your-username"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="email" className="block text-sm font-medium text-white/80">客服邮箱</label>
+                          <input
+                            type="email"
+                            id="email"
+                            value={settings.email || ''}
+                            onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                            className="mt-1 block w-full rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                            placeholder="support@example.com"
+                          />
+                        </div>
+                        <div className="flex justify-end space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingSettings(false)}
+                            className="px-4 py-2 border border-white/30 rounded-md text-white hover:bg-white/10"
+                          >
+                            取消
+                          </button>
+                          <button
+                            onClick={handleSettingsUpdate}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                          >
+                            保存更改
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-medium text-white/70">WhatsApp 链接</h4>
+                          <p className="mt-1 text-sm text-white">{settings.whatsapp_link || '未设置'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white/70">Telegram 链接</h4>
+                          <p className="mt-1 text-sm text-white">{settings.telegram_link || '未设置'}</p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-white/70">客服邮箱</h4>
+                          <p className="mt-1 text-sm text-white">{settings.email || '未设置'}</p>
+                        </div>
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => setIsEditingSettings(true)}
+                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            编辑设置
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* 轮播图管理 */}
+              <div className="admin-card text-white">
+                <div className="admin-card-inner px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-semibold text-white">首页轮播图管理</h3>
+                  <div className="mt-4 space-y-4">
+                    <div className="flex gap-4">
+                      <input
+                        type="text"
+                        value={newCarouselUrl}
+                        onChange={(e) => setNewCarouselUrl(e.target.value)}
+                        placeholder="输入图片URL或视频URL"
+                        className="flex-1 rounded-md p-2 bg-black/30 text-white placeholder-white/60 border border-white/20"
+                      />
+                      <button 
+                        onClick={addCarousel}
+                        className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 text-white"
+                      >
+                        添加
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {carousel.map((item, index) => (
+                        <div key={item.id} className="relative group">
+                          {item.type === 'video' ? (
+                            <video src={item.src} className="w-full h-32 object-cover rounded" controls />
+                          ) : (
+                            <img src={item.src} alt={item.alt || `轮播图 ${index + 1}`} className="w-full h-32 object-cover rounded" />
+                          )}
+                          <button
+                            onClick={() => removeCarousel(item.id)}
+                            title="删除轮播图"
+                            aria-label="删除轮播图"
+                            className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
