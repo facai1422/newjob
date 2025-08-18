@@ -42,17 +42,18 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [hasResume, setHasResume] = React.useState(false);
   
-  // 监听 OAuth 状态变化
+  // 监听认证状态变化
   React.useEffect(() => {
     // 检查初始认证状态
-    const checkAuth = async () => {
+    const checkInitialAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setIsLoggedIn(true);
+        await checkHasResume();
       }
     };
 
-    checkAuth();
+    checkInitialAuth();
 
     // 监听认证状态变化
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -61,6 +62,7 @@ function App() {
         
         if (event === 'SIGNED_IN' && session) {
           setIsLoggedIn(true);
+          await checkHasResume();
           
           // Google OAuth 登录成功后的处理
           if (session.user?.app_metadata?.provider === 'google') {
@@ -79,6 +81,7 @@ function App() {
           }
         } else if (event === 'SIGNED_OUT') {
           setIsLoggedIn(false);
+          setHasResume(false);
         }
       }
     );
@@ -139,17 +142,7 @@ function App() {
   
 
   React.useEffect(() => {
-    checkAuth();
-    
     fetchJobCounts();
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-      if (session) {
-        void checkHasResume();
-      } else {
-        setHasResume(false);
-      }
-    });
 
     const handleResumeSubmitted = () => setHasResume(true);
     window.addEventListener('resume:submitted', handleResumeSubmitted);
@@ -158,13 +151,7 @@ function App() {
     };
   }, []);
 
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setIsLoggedIn(!!session);
-    if (session) {
-      await checkHasResume();
-    }
-  };
+
 
   const checkHasResume = async () => {
     try {
