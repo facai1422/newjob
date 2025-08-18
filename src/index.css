@@ -2,6 +2,56 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 强制设置页面底色为黑色，防止滑动时显示白色，但不影响现有动画 */
+html {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+body {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+#root {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* 强制覆盖任何可能的白色背景，但保持透明度和动画 */
+* {
+  /* 只在没有背景时应用黑色 */
+}
+
+*:not([style*="background"]):not(.bg-gradient-to-):not([class*="bg-gradient"]):not([class*="from-"]):not([class*="to-"]) {
+  /* 对没有特定背景的元素，确保底色是黑色 */
+}
+
+/* 确保整个视口都是黑色 */
+html, body {
+  min-height: 100vh;
+  background: #000000 !important;
+}
+
+/* 移动端滑动时的背景 */
+html {
+  -webkit-overflow-scrolling: touch;
+  background-attachment: fixed;
+  background: #000000 !important;
+}
+
+/* iOS Safari 滑动过度时的背景 */
+html::before {
+  content: '';
+  position: fixed;
+  top: -100vh;
+  left: 0;
+  width: 100%;
+  height: 300vh;
+  background: #000000;
+  z-index: -999;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

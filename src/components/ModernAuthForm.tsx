@@ -69,8 +69,21 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
         console.log('OTP response:', { data, error });
 
         if (error) {
-          console.error('OTP Error details:', error);
-          throw error;
+          // 如果邮箱已存在，尝试发送登录OTP
+          if (error.message?.includes('invalid') || error.message?.includes('already')) {
+            console.log('User exists, sending login OTP instead');
+            const { error: loginError } = await supabase.auth.signInWithOtp({
+              email
+            });
+            
+            if (loginError) {
+              console.error('Login OTP Error:', loginError);
+              throw loginError;
+            }
+          } else {
+            console.error('OTP Error details:', error);
+            throw error;
+          }
         }
 
         setInfo(t('auth.verificationCodeSent'));

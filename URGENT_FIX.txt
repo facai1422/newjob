@@ -1,0 +1,23 @@
+🚨 紧急修复邮箱验证问题
+
+问题：Email address "supabasedoge@gmail.com" is invalid
+
+立即解决步骤：
+
+1. 打开链接：
+https://supabase.com/dashboard/project/yobpdwtturkwqrisirdi/auth/templates
+
+2. 找到 "Magic Link" 模板，点击编辑
+
+3. 删除所有内容，粘贴以下内容：
+
+<h2>Verification Code</h2>
+<p>Your code: {{ .Token }}</p>
+<p>Valid for 10 minutes</p>
+<p>Link: <a href="{{ .ConfirmationURL }}">Click here</a></p>
+
+4. 点击 Save 保存
+
+5. 立即测试注册功能
+
+这个最简单的模板必须包含 {{ .Token }} 才能发送验证码！
