@@ -77,7 +77,18 @@ export const translations = {
       genericError: 'Something went wrong. Please try again later.',
       emailNotConfirmed: 'Your email is not confirmed. Please check your inbox and confirm your email.',
       resendConfirmation: 'Resend confirmation email',
-      confirmationSent: 'Confirmation email has been sent. Please check your inbox.'
+      confirmationSent: 'Confirmation email has been sent. Please check your inbox.',
+      verifyEmail: 'Verify Email',
+      verificationCodeSentTo: 'We have sent a verification code to',
+      enterVerificationCode: 'Enter 6-digit code',
+      verify: 'Verify',
+      verifying: 'Verifying...',
+      verificationSuccess: 'Email verified successfully!',
+      verificationFailed: 'Invalid verification code. Please try again.',
+      resendCode: 'Resend Code',
+      resendIn: 'Resend in',
+      verificationCodeSent: 'Verification code sent successfully!',
+      resendFailed: 'Failed to resend verification code'
     },
     resume: {
       submitTitle: 'Submit Resume',
@@ -248,7 +259,18 @@ export const translations = {
       genericError: '发生错误，请稍后重试。',
       emailNotConfirmed: '邮箱未确认，请前往邮箱查收确认邮件后再尝试登录。',
       resendConfirmation: '重发确认邮件',
-      confirmationSent: '确认邮件已发送，请查收。'
+      confirmationSent: '确认邮件已发送，请查收。',
+      verifyEmail: '验证邮箱',
+      verificationCodeSentTo: '我们已向以下邮箱发送验证码',
+      enterVerificationCode: '请输入6位验证码',
+      verify: '验证',
+      verifying: '验证中...',
+      verificationSuccess: '邮箱验证成功！',
+      verificationFailed: '验证码无效，请重新输入。',
+      resendCode: '重发验证码',
+      resendIn: '重发验证码倒计时',
+      verificationCodeSent: '验证码发送成功！',
+      resendFailed: '重发验证码失败'
     },
     resume: {
       submitTitle: '提交简历',
