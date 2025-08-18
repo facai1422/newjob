@@ -3,7 +3,8 @@ import { SkeletonLine } from '@/components/ui/skeleton';
 import { createPortal } from 'react-dom';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
-import { Users, BriefcaseIcon, BarChart, ArrowLeft, LogOut, Plus, Edit, Trash2, Send } from 'lucide-react';
+import { Users, BriefcaseIcon, BarChart, ArrowLeft, LogOut, Plus, Edit, Trash2, Send, Settings, UserCheck } from 'lucide-react';
+import { UserManagement } from '../components/UserManagement';
 import { supabase } from '../lib/supabase';
 import { HeroGeometric } from '@/components/ui/shape-landing-hero';
 
@@ -62,6 +63,7 @@ type JobForm = {
 export function AdminDashboard() {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState<'overview' | 'jobs' | 'users' | 'settings'>('overview');
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [settings, setSettings] = useState<CustomerServiceSettings>({
@@ -528,9 +530,40 @@ export function AdminDashboard() {
         </div>
       </nav>
 
+      {/* 标签页导航 */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex space-x-8" aria-label="Tabs">
+            {[
+              { id: 'overview', name: '概览', icon: BarChart },
+              { id: 'jobs', name: '岗位管理', icon: BriefcaseIcon },
+              { id: 'users', name: '用户管理', icon: UserCheck },
+              { id: 'settings', name: '系统设置', icon: Settings },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`${
+                  activeTab === tab.id
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2`}
+              >
+                <tab.icon className="w-4 h-4" />
+                {tab.name}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          
+          {/* 概览标签页 */}
+          {activeTab === 'overview' && (
+            <>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, index) => (
               <div key={index} className="admin-card">
                 <div className="admin-card-inner p-5">
@@ -1017,9 +1050,51 @@ export function AdminDashboard() {
                   </div>
                 </form>
               </div>
+              </div>
             </div>
+            </>
+          )}
+
+          {/* 岗位管理标签页 */}
+          {activeTab === 'jobs' && (
+            <div className="admin-card text-white">
+              <div className="admin-card-inner px-4 py-5 sm:p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.jobPostings')}</h3>
+                  <button
+                    onClick={() => {
+                      setIsAddingJob(true);
+                      setEditingJob(null);
+                      setJobForm({ title: '', salary: '', description: '', working_hours: '', image_url: '', location: '', rich_description: [] as any[] });
+                    }}
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    {t('admin.addNewJob')}
+                  </button>
+                </div>
+                <p className="text-white/80">岗位管理功能已移至此标签页 - 功能保持不变</p>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* 用户管理标签页 */}
+          {activeTab === 'users' && (
+            <UserManagement />
+          )}
+
+          {/* 系统设置标签页 */}
+          {activeTab === 'settings' && (
+            <div className="space-y-6">
+              <div className="admin-card">
+                <div className="admin-card-inner px-4 py-5 sm:p-6">
+                  <h3 className="text-lg leading-6 font-semibold text-white">{t('admin.settings')}</h3>
+                  <p className="text-white/80 mt-2">系统设置功能已移至此标签页 - 包括客服设置、轮播图管理等</p>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
     </div>

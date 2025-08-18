@@ -82,12 +82,22 @@ export function EmailVerification({ email, password, onVerificationComplete, onB
         throw new Error(result.error || t('auth.resendFailed'));
       }
 
-      // 在开发环境中显示验证码（生产环境应移除）
-      if (result.debug_code) {
-        console.log('新验证码:', result.debug_code);
-        setInfo(`验证码已重发！开发模式验证码: ${result.debug_code}`);
+      // 处理邮件发送结果
+      if (result.email_sent) {
+        if (result.debug_code) {
+          console.log('新验证码:', result.debug_code);
+          setInfo(`验证码已重发！开发模式验证码: ${result.debug_code}`);
+        } else {
+          setInfo(t('auth.verificationCodeSent') + '，请注意查收');
+        }
       } else {
-        setInfo(t('auth.verificationCodeSent'));
+        if (result.debug_code) {
+          console.log('新验证码:', result.debug_code);
+          setInfo(`邮件服务暂时不可用，开发模式验证码: ${result.debug_code}`);
+        } else {
+          setError('邮件发送失败，请稍后重试');
+          return;
+        }
       }
       setCountdown(60); // 60秒倒计时
     } catch (err: any) {
