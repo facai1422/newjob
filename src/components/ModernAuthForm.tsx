@@ -58,14 +58,18 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
     try {
       if (isRegistering) {
         // 使用Supabase邮箱OTP验证码
-        const { error } = await supabase.auth.signInWithOtp({
+        console.log('Attempting to send OTP to:', email);
+        const { data, error } = await supabase.auth.signInWithOtp({
           email,
           options: {
             shouldCreateUser: true
           }
         });
 
+        console.log('OTP response:', { data, error });
+
         if (error) {
+          console.error('OTP Error details:', error);
           throw error;
         }
 
@@ -217,19 +221,24 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
 
     try {
       // 重新发送OTP验证码
-      const { error } = await supabase.auth.signInWithOtp({
+      console.log('Resending OTP to:', email);
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: isRegistering
         }
       });
 
+      console.log('Resend OTP response:', { data, error });
+
       if (error) {
+        console.error('Resend OTP Error details:', error);
         throw error;
       }
 
       setInfo(t('auth.verificationCodeSent'));
     } catch (err: any) {
+      console.error('Resend error:', err);
       setError(err?.message || t('auth.resendFailed'));
     } finally {
       setIsLoading(false);
