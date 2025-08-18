@@ -218,9 +218,35 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
     }
   };
 
-  // Google 登录（占位）
-  const handleGoogleSignIn = () => {
-    console.log("Google 登录功能开发中...");
+  // Google 登录
+  const handleGoogleSignIn = async () => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}${returnToQuery || '/'}`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      // OAuth 会重定向，这里通常不会执行
+      console.log('Google OAuth initiated:', data);
+    } catch (err: any) {
+      console.error('Google login error:', err);
+      setError(err?.message || 'Google 登录失败');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

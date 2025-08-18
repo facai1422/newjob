@@ -42,6 +42,50 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [hasResume, setHasResume] = React.useState(false);
   
+  // 监听 OAuth 状态变化
+  React.useEffect(() => {
+    // 检查初始认证状态
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsLoggedIn(true);
+      }
+    };
+
+    checkAuth();
+
+    // 监听认证状态变化
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session);
+        
+        if (event === 'SIGNED_IN' && session) {
+          setIsLoggedIn(true);
+          
+          // Google OAuth 登录成功后的处理
+          if (session.user?.app_metadata?.provider === 'google') {
+            console.log('Google OAuth login successful:', session.user);
+            
+            // 检查是否是管理员
+            const isAdminEmail = ['admin@example.com', 'mz2503687@gmail.com', 'it@haixin.org']
+              .includes(session.user.email?.toLowerCase() || '');
+            
+            // 可以在这里添加跳转逻辑
+            if (isAdminEmail) {
+              window.location.href = '/dashabi/dashboard';
+            } else {
+              window.location.href = '/';
+            }
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setIsLoggedIn(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+  
   const [jobLocations, setJobLocations] = React.useState<JobLocation[]>([
     {
       id: 1,
