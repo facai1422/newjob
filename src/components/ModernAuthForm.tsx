@@ -23,6 +23,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [code, setCode] = useState(['', '', '', '', '', '']);
 
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -31,6 +32,18 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
   // 动画状态
   const [initialCanvasVisible, setInitialCanvasVisible] = useState(true);
   const [reverseCanvasVisible, setReverseCanvasVisible] = useState(false);
+  
+  // 引用
+  const codeInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // 聚焦到验证码输入框
+  useEffect(() => {
+    if (step === "code") {
+      setTimeout(() => {
+        codeInputRefs.current[0]?.focus();
+      }, 500);
+    }
+  }, [step]);
   
 
 
@@ -44,12 +57,11 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
 
     try {
       if (isRegistering) {
-        // 使用Supabase原生邮箱验证
-        const { error } = await supabase.auth.signUp({
+        // 使用Supabase邮箱OTP验证码
+        const { error } = await supabase.auth.signInWithOtp({
           email,
-          password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+            shouldCreateUser: true
           }
         });
 
@@ -57,8 +69,8 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
           throw error;
         }
 
-        setInfo(t('auth.confirmationSent'));
-        // 跳到验证页面，显示邮箱验证提示
+        setInfo(t('auth.verificationCodeSent'));
+        // 跳到验证码输入页面
         setStep("code");
       } else {
         // 普通登录
@@ -88,27 +100,127 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
     }
   };
 
+  // 处理验证码输入
+  const handleCodeChange = (index: number, value: string) => {
+    if (value.length <= 1) {
+      const newCode = [...code];
+      newCode[index] = value;
+      setCode(newCode);
+      
+      // 自动跳转到下一个输入框
+      if (value && index < 5) {
+        codeInputRefs.current[index + 1]?.focus();
+      }
+      
+      // 如果是最后一位且所有位都已填写，自动验证
+      if (index === 5 && value) {
+        const isComplete = newCode.every(digit => digit.length === 1);
+        if (isComplete) {
+          handleVerifyCode(newCode.join(''));
+        }
+      }
+    }
+  };
+
+  // 处理验证码验证
+  const handleVerifyCode = async (fullCode?: string) => {
+    const codeToVerify = fullCode || code.join('');
+    setError(null);
+    setInfo(null);
+    setIsLoading(true);
+
+    try {
+      if (isRegistering) {
+        // 验证OTP码
+        const { data, error } = await supabase.auth.verifyOtp({
+          email,
+          token: codeToVerify,
+          type: 'email'
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // 如果验证成功，需要设置密码（因为OTP注册不设置密码）
+        if (data.user && password) {
+          const { error: updateError } = await supabase.auth.updateUser({
+            password: password
+          });
+          
+          if (updateError) {
+            console.warn('Password update failed:', updateError);
+          }
+        }
+
+        setInfo(t('auth.verificationSuccess'));
+        
+        // 动画效果
+        setReverseCanvasVisible(true);
+        setTimeout(() => {
+          setInitialCanvasVisible(false);
+        }, 50);
+        
+        setTimeout(() => {
+          setStep("success");
+          setTimeout(() => {
+            navigate(returnToQuery || '/');
+          }, 2000);
+        }, 2000);
+      } else {
+        // 登录时的OTP验证
+        const { error } = await supabase.auth.verifyOtp({
+          email,
+          token: codeToVerify,
+          type: 'email'
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        setStep("success");
+        setTimeout(() => {
+          navigate(returnToQuery || '/');
+        }, 2000);
+      }
+    } catch (err: any) {
+      console.error('Verification error:', err);
+      setError(err?.message || t('auth.verificationFailed'));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 键盘导航
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !code[index] && index > 0) {
+      codeInputRefs.current[index - 1]?.focus();
+    }
+  };
+
   // 返回邮箱步骤
   const handleBackToEmail = () => {
     setStep("email");
+    setCode(['', '', '', '', '', '']);
     setError(null);
     setInfo(null);
     setReverseCanvasVisible(false);
     setInitialCanvasVisible(true);
   };
 
-  // 重发确认邮件
+  // 重发验证码
   const handleResendCode = async () => {
     setError(null);
     setInfo(null);
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
+      // 重新发送OTP验证码
+      const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+          shouldCreateUser: isRegistering
         }
       });
 
@@ -116,7 +228,7 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
         throw error;
       }
 
-      setInfo(t('auth.confirmationSent'));
+      setInfo(t('auth.verificationCodeSent'));
     } catch (err: any) {
       setError(err?.message || t('auth.resendFailed'));
     } finally {
@@ -325,17 +437,36 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 )}
                 
                 <div className="w-full">
-                  <div className="relative rounded-lg py-6 px-5 border border-white/10 bg-white/5 backdrop-blur">
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center">
-                        <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-white/70">请检查您的邮箱并点击确认链接</p>
-                        <p className="text-sm text-white/50 mt-2">确认后会自动跳转到登录页面</p>
-                      </div>
+                  <div className="relative rounded-full py-4 px-5 border border-white/10 bg-transparent">
+                    <div className="flex items-center justify-center">
+                      {code.map((digit, i) => (
+                        <div key={i} className="flex items-center">
+                          <div className="relative">
+                            <input
+                              ref={(el) => {
+                                codeInputRefs.current[i] = el;
+                              }}
+                              type="text"
+                              inputMode="numeric"
+                              pattern="[0-9]*"
+                              maxLength={1}
+                              value={digit}
+                              onChange={e => handleCodeChange(i, e.target.value)}
+                              onKeyDown={e => handleKeyDown(i, e)}
+                              className="w-8 text-center text-xl bg-transparent text-white border-none focus:outline-none focus:ring-0 appearance-none [caret-color:transparent]"
+                              title={`${t('auth.enterCode')} ${i + 1}`}
+                            />
+                            {!digit && (
+                              <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none">
+                                <span className="text-xl text-white/30">0</span>
+                              </div>
+                            )}
+                          </div>
+                          {i < code.length - 1 && (
+                            <div className="w-4 h-px bg-white/10 mx-1" />
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -355,12 +486,23 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                 <div className="flex w-full gap-3">
                   <motion.button 
                     onClick={handleBackToEmail}
-                    className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-full"
+                    className="rounded-full bg-white text-black font-medium px-8 py-3 hover:bg-white/90 transition-colors w-[30%]"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     transition={{ duration: 0.2 }}
                   >
                     {t('auth.backToLogin')}
+                  </motion.button>
+                  <motion.button 
+                    onClick={() => handleVerifyCode()}
+                    disabled={!code.every(d => d !== "") || isLoading}
+                    className={`flex-1 rounded-full font-medium py-3 border transition-all duration-300 ${
+                      code.every(d => d !== "") && !isLoading
+                      ? "bg-white text-black border-transparent hover:bg-white/90 cursor-pointer" 
+                      : "bg-[#111] text-white/50 border-white/10 cursor-not-allowed"
+                    }`}
+                  >
+                    {isLoading ? t('auth.verifying') : t('auth.verifyAndContinue')}
                   </motion.button>
                 </div>
               </motion.div>

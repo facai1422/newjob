@@ -29,12 +29,11 @@ export function AuthForm() {
 
     try {
       if (isRegistering) {
-        // 使用Supabase原生邮箱验证
-        const { error } = await supabase.auth.signUp({
+        // 使用Supabase邮箱OTP验证码
+        const { error } = await supabase.auth.signInWithOtp({
           email,
-          password,
           options: {
-            emailRedirectTo: `${window.location.origin}/dashabi/login?verified=true`
+            shouldCreateUser: true
           }
         });
 
@@ -42,7 +41,7 @@ export function AuthForm() {
           throw error;
         }
 
-        setInfo(t('auth.confirmationSent'));
+        setInfo(t('auth.verificationCodeSent'));
         return;
       } else {
         // For login
@@ -87,12 +86,14 @@ export function AuthForm() {
       return;
     }
     try {
-      const { error: resendError } = await supabase.auth.resend({
-        type: 'signup',
-        email
+      const { error: resendError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: isRegistering
+        }
       });
       if (resendError) throw resendError;
-      setInfo(t('auth.confirmationSent'));
+      setInfo(t('auth.verificationCodeSent'));
     } catch (e: any) {
       setError(e?.message || t('auth.genericError'));
     }
