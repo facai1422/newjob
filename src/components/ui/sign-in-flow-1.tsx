@@ -402,7 +402,7 @@ function MiniNavbar() {
 
   const loginButtonElement = (
     <RouterLink 
-      to="/dashabi/login"
+      to="/login"
       className="px-4 py-2 sm:px-3 text-xs sm:text-sm border border-[#333] bg-[rgba(31,31,31,0.62)] text-gray-300 rounded-full hover:border-white/50 hover:text-white transition-colors duration-200 w-full sm:w-auto text-center"
     >
       登录
@@ -418,7 +418,7 @@ function MiniNavbar() {
                     transition-all duration-300 ease-out
                     group-hover:opacity-60 group-hover:blur-xl group-hover:-m-3"></div>
       <RouterLink 
-        to="/dashabi/login"
+        to="/login"
         className="relative z-10 px-4 py-2 sm:px-3 text-xs sm:text-sm font-semibold text-black bg-gradient-to-br from-gray-100 to-gray-300 rounded-full hover:from-gray-200 hover:to-gray-400 transition-all duration-200 w-full sm:w-auto text-center block"
       >
         注册
@@ -625,7 +625,13 @@ export const SignInPage = ({ className, onEmailSubmit, onCodeSubmit, onSuccess }
                         onClick={handleGoogleSignIn}
                         className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full py-3 px-4 transition-colors"
                       >
-                        <span className="text-lg">G</span>
+                        <img 
+                          src="https://cy-747263170.imgix.net/icon48.png"
+                          alt="Google"
+                          width={20}
+                          height={20}
+                          className="object-contain"
+                        />
                         <span>使用 Google 登录</span>
                       </button>
                       

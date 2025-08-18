@@ -17,7 +17,7 @@ export default function Profile() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         const returnTo = encodeURIComponent('/profile');
-        window.location.assign(`/dashabi/login?returnTo=${returnTo}`);
+        window.location.assign(`/login?returnTo=${returnTo}`);
         return;
       }
       setUser({ id: user.id, email: user.email || '', user_metadata: user.user_metadata });
@@ -71,12 +71,26 @@ export default function Profile() {
             <h2 className="text-lg font-semibold mb-4">Personal Info</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm mb-1">Display Name</label>
-                <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="w-full rounded-md p-2 bg-black/30 border border-white/20" />
+                <label htmlFor="displayName" className="block text-sm mb-1">Display Name</label>
+                <input 
+                  id="displayName"
+                  type="text"
+                  placeholder="Enter your display name"
+                  value={displayName} 
+                  onChange={(e) => setDisplayName(e.target.value)} 
+                  className="w-full rounded-md p-2 bg-black/30 border border-white/20" 
+                />
               </div>
               <div>
-                <label className="block text-sm mb-1">Avatar URL</label>
-                <input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} className="w-full rounded-md p-2 bg-black/30 border border-white/20" />
+                <label htmlFor="avatarUrl" className="block text-sm mb-1">Avatar URL</label>
+                <input 
+                  id="avatarUrl"
+                  type="url"
+                  placeholder="Enter avatar URL (https://...)"
+                  value={avatarUrl} 
+                  onChange={(e) => setAvatarUrl(e.target.value)} 
+                  className="w-full rounded-md p-2 bg-black/30 border border-white/20" 
+                />
               </div>
               <button onClick={saveProfile} disabled={saving} className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-60">Save</button>
             </div>

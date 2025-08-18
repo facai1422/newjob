@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm your signup - Hirely</title>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            --background: #ffffff;
+            --foreground: #0f172a;
+            --card: #ffffff;
+            --card-foreground: #0f172a;
+            --primary: #0f172a;
+            --primary-foreground: #f8fafc;
+            --secondary: #f1f5f9;
+            --secondary-foreground: #0f172a;
+            --muted: #f1f5f9;
+            --muted-foreground: #64748b;
+            --border: #e2e8f0;
+            --green-100: #dcfce7;
+            --green-600: #16a34a;
+            --green-900-20: rgba(20, 83, 45, 0.2);
+            --green-400: #4ade80;
+        }
+
+        /* Dark mode variables */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --background: #020617;
+                --foreground: #f8fafc;
+                --card: #020617;
+                --card-foreground: #f8fafc;
+                --primary: #f8fafc;
+                --primary-foreground: #0f172a;
+                --secondary: #1e293b;
+                --secondary-foreground: #f8fafc;
+                --muted: #1e293b;
+                --muted-foreground: #94a3b8;
+                --border: #1e293b;
+            }
+        }
+
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.5;
+            background-color: var(--background);
+            color: var(--foreground);
+            padding: 16px;
+        }
+
+        /* Main container - matching min-h-screen bg-background p-4 md:p-8 */
+        .email-wrapper {
+            min-height: 100vh;
+            background-color: var(--background);
+            padding: 16px;
+        }
+
+        /* mx-auto max-w-2xl */
+        .email-container {
+            margin: 0 auto;
+            max-width: 42rem; /* max-w-2xl = 672px = 42rem */
+        }
+
+        /* Card - overflow-hidden border-border bg-card shadow-lg */
+        .email-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background-color: var(--card);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+        }
+
+        /* Header - bg-primary px-6 py-8 text-center */
+        .email-header {
+            background-color: var(--primary);
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        /* Icon container - mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-foreground */
+        .header-icon {
+            margin: 0 auto 16px auto;
+            display: flex;
+            height: 64px;
+            width: 64px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: var(--primary-foreground);
+        }
+
+        /* Mail icon - h-8 w-8 text-primary */
+        .mail-icon {
+            height: 32px;
+            width: 32px;
+            color: var(--primary);
+        }
+
+        /* Header title - text-2xl font-bold text-primary-foreground */
+        .header-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-foreground);
+            margin: 0;
+        }
+
+        /* Header subtitle - mt-2 text-primary-foreground/80 */
+        .header-subtitle {
+            margin-top: 8px;
+            color: var(--primary-foreground);
+            opacity: 0.8;
+        }
+
+        /* Content container - px-6 py-8 */
+        .email-content {
+            padding: 32px 24px;
+        }
+
+        /* Center container - text-center */
+        .content-center {
+            text-align: center;
+        }
+
+        /* Success icon container - mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20 */
+        .success-icon-container {
+            margin: 0 auto 24px auto;
+            display: flex;
+            height: 80px;
+            width: 80px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: var(--green-100);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .success-icon-container {
+                background-color: var(--green-900-20);
+            }
+        }
+
+        /* Check icon - h-10 w-10 text-green-600 dark:text-green-400 */
+        .check-icon {
+            height: 40px;
+            width: 40px;
+            color: var(--green-600);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .check-icon {
+                color: var(--green-400);
+            }
+        }
+
+        /* Main title - mb-4 text-2xl font-bold text-foreground */
+        .main-title {
+            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--foreground);
+        }
+
+        /* Description - mb-6 text-muted-foreground */
+        .description {
+            margin-bottom: 24px;
+            color: var(--muted-foreground);
+        }
+
+        /* Email box - mb-8 rounded-lg bg-muted p-4 */
+        .email-box {
+            margin-bottom: 32px;
+            border-radius: 8px;
+            background-color: var(--muted);
+            padding: 16px;
+        }
+
+        /* Email label - text-sm text-muted-foreground mb-2 */
+        .email-label {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            margin-bottom: 8px;
+        }
+
+        /* Email value - font-medium text-foreground */
+        .email-value {
+            font-weight: 500;
+            color: var(--foreground);
+        }
+
+        /* Separator - my-8 */
+        .separator {
+            margin: 32px 0;
+            height: 1px;
+            background-color: var(--border);
+            border: none;
+        }
+
+        /* Verification section - text-center mb-8 */
+        .verification-section {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        /* Verification header - flex items-center justify-center gap-2 mb-4 */
+        .verification-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        /* Shield icon - h-5 w-5 text-primary */
+        .shield-icon {
+            height: 20px;
+            width: 20px;
+            color: var(--primary);
+        }
+
+        /* Verification title - text-lg font-semibold text-foreground */
+        .verification-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        /* Verification description - text-sm text-muted-foreground mb-4 */
+        .verification-description {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            margin-bottom: 16px;
+        }
+
+        /* Badge - px-6 py-3 text-2xl font-mono tracking-wider variant="secondary" */
+        .verification-badge {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 24px;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+            letter-spacing: 0.1em;
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        /* Expiry note - mt-3 text-xs text-muted-foreground */
+        .expiry-note {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        /* Confirmation section - text-center */
+        .confirmation-section {
+            text-align: center;
+        }
+
+        /* Confirmation title - text-lg font-semibold text-foreground mb-4 */
+        .confirmation-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 16px;
+        }
+
+        /* Confirmation description - text-sm text-muted-foreground mb-6 */
+        .confirmation-description {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            margin-bottom: 24px;
+        }
+
+        /* Button - w-full sm:w-auto px-8 py-3 text-base font-medium size="lg" */
+        .confirmation-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            text-decoration: none;
+            border-radius: 6px;
+            border: 1px solid var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        .confirmation-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Button icon - mr-2 h-5 w-5 */
+        .button-icon {
+            margin-right: 8px;
+            height: 20px;
+            width: 20px;
+        }
+
+        /* Backup instructions - mt-4 text-xs text-muted-foreground */
+        .backup-instructions {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        /* Backup link container - mt-3 rounded-md bg-muted p-3 */
+        .backup-link-container {
+            margin-top: 12px;
+            border-radius: 6px;
+            background-color: var(--muted);
+            padding: 12px;
+        }
+
+        /* Backup link code - text-xs text-muted-foreground break-all */
+        .backup-link-code {
+            font-size: 12px;
+            color: var(--muted-foreground);
+            word-break: break-all;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+        }
+
+        /* Footer - text-center text-sm text-muted-foreground */
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        .footer .last-p {
+            margin-bottom: 16px;
+        }
+
+        /* Footer links - flex flex-col sm:flex-row gap-4 justify-center items-center text-xs */
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Separator in footer - hidden sm:inline */
+        .footer-separator {
+            display: none;
+        }
+
+        /* Responsive design */
+        @media (min-width: 640px) {
+            .email-wrapper {
+                padding: 32px;
+            }
+
+            .confirmation-button {
+                width: auto;
+            }
+
+            .footer-links {
+                flex-direction: row;
+            }
+
+            .footer-separator {
+                display: inline;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-wrapper">
+        <div class="email-container">
+            <div class="email-card">
+                <!-- Header -->
+                <div class="email-header">
+                    <div class="header-icon">
+                        <svg class="mail-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="header-title">Hirely</h1>
+                    <p class="header-subtitle">Job Platform Email Verification</p>
+                </div>
+
+                <!-- Content -->
+                <div class="email-content">
+                    <div class="content-center">
+                        <div class="success-icon-container">
+                            <svg class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        
+                        <h2 class="main-title">Confirm your signup</h2>
+                        
+                        <p class="description">
+                            Thank you for creating an account with Hirely! To complete your registration and start exploring job opportunities, please verify your email address using one of the methods below.
+                        </p>
+
+                        <div class="email-box">
+                            <p class="email-label">Registration Email:</p>
+                            <p class="email-value">{{ .Email }}</p>
+                        </div>
+                    </div>
+
+                    <hr class="separator" />
+
+                    <!-- Verification Code Section -->
+                    <div class="verification-section">
+                        <div class="verification-header">
+                            <svg class="shield-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <h3 class="verification-title">Verification Code</h3>
+                        </div>
+                        
+                        <p class="verification-description">
+                            Please use the following verification code to complete email verification:
+                        </p>
+                        
+                        <div class="verification-badge">{{ .Token }}</div>
+                        
+                        <p class="expiry-note">
+                            Verification code expires in 10 minutes
+                        </p>
+                    </div>
+
+                    <hr class="separator" />
+
+                    <!-- Confirmation Link Section -->
+                    <div class="confirmation-section">
+                        <h3 class="confirmation-title">Or click the link to confirm</h3>
+                        
+                        <p class="confirmation-description">
+                            You can also click the button below to confirm your email address:
+                        </p>
+                        
+                        <a href="{{ .ConfirmationURL }}" class="confirmation-button">
+                            <svg class="button-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Verify My Email Address
+                        </a>
+                        
+                        <div style="margin-top: 16px; padding: 12px; background-color: #f0f9ff; border-radius: 6px; border-left: 4px solid #0ea5e9;">
+                            <p style="font-size: 12px; color: #0c4a6e; margin: 0;">
+                                🔒 This is a secure verification link sent from Hirely. This link will expire in 24 hours.
+                            </p>
+                        </div>
+                        
+                        <p class="backup-instructions">
+                            If the button doesn't work, please copy the following link to your browser address bar:
+                        </p>
+                        
+                        <div class="backup-link-container">
+                            <code class="backup-link-code">{{ .ConfirmationURL }}</code>
+                        </div>
+                    </div>
+
+                    <hr class="separator" />
+
+                    <!-- Footer Information -->
+                    <div class="footer">
+                        <p>This email was sent to {{ .Email }} because you created an account at Hirely.</p>
+                        <p>If you didn't create a Hirely account, please ignore this email and no further action is required.</p>
+                        <p class="last-p">For support, contact us at support@hirely.com</p>
+                        
+                        <div class="footer-links">
+                            <span>© 2025 Hirely, Inc.</span>
+                            <span class="footer-separator">•</span>
+                            <a href="https://hirely.com/privacy">Privacy Policy</a>
+                            <span class="footer-separator">•</span>
+                            <a href="https://hirely.com/terms">Terms of Service</a>
+                            <span class="footer-separator">•</span>
+                            <a href="https://hirely.com/unsubscribe">Unsubscribe</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

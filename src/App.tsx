@@ -10,6 +10,7 @@ import { LocationJobs } from './pages/LocationJobs';
 import { MyResume } from './pages/MyResume';
 import { AuthForm } from './components/AuthForm';
 import { ModernAuthForm } from './components/ModernAuthForm';
+import { AdminAuthForm } from './components/AdminAuthForm';
 import { AdminDashboard } from './pages/AdminDashboard';
 import Locations from './pages/Locations';
 import { supabase } from './lib/supabase';
@@ -64,20 +65,12 @@ function App() {
           setIsLoggedIn(true);
           await checkHasResume();
           
-          // Google OAuth 登录成功后的处理
+          // Google OAuth 登录成功后的处理 - 仅用户端
           if (session.user?.app_metadata?.provider === 'google') {
             console.log('Google OAuth login successful:', session.user);
             
-            // 检查是否是管理员
-            const isAdminEmail = ['admin@example.com', 'mz2503687@gmail.com', 'it@haixin.org']
-              .includes(session.user.email?.toLowerCase() || '');
-            
-            // 可以在这里添加跳转逻辑
-            if (isAdminEmail) {
-              window.location.href = '/dashabi/dashboard';
-            } else {
-              window.location.href = '/';
-            }
+            // 用户端登录，直接跳转到首页
+            window.location.href = '/';
           }
         } else if (event === 'SIGNED_OUT') {
           setIsLoggedIn(false);
@@ -207,15 +200,19 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* 用户端路由 */}
         <Route path="/submit-resume" element={<ResumeForm />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/jobs/location/:location" element={<LocationJobs />} />
-        <Route path="/dashabi/login" element={<ModernAuthForm />} />
+        <Route path="/login" element={<ModernAuthForm />} />
         <Route path="/my-resume" element={<MyResume />} />
-        <Route path="/dashabi/dashboard" element={<AdminDashboard />} />
         <Route path="/locations" element={<Locations />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/profile" element={<Profile />} />
+        
+        {/* 管理后台路由 - 完全独立 */}
+        <Route path="/dashabi/login" element={<AdminAuthForm />} />
+        <Route path="/dashabi/dashboard" element={<AdminDashboard />} />
         <Route path="/" element={
           <div className="min-h-screen">
             <GeometricBackground />
@@ -245,7 +242,7 @@ function App() {
                       {isLoggedIn ? (
                         <LogoutFab onClick={handleLogout} />
                       ) : (
-                        <Link to="/dashabi/login" aria-label="Login" className="super-button">
+                        <Link to="/login" aria-label="Login" className="super-button">
                           <span>{t('auth.login')}</span>
                           <svg fill="none" viewBox="0 0 24 24" className="arrow">
                             <path strokeLinejoin="round" strokeLinecap="round" strokeWidth={2} stroke="currentColor" d="M5 12h14M13 6l6 6-6 6" />

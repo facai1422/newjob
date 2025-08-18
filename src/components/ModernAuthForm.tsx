@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase';
 import { useLanguage } from '../i18n/LanguageContext';
 import { LanguageSelector } from './LanguageSelector';
 import { CanvasRevealEffect } from './ui/sign-in-flow-1';
+import { GoogleIcon, GoogleIconFallback } from './ui/google-icon';
 
 interface ModernAuthFormProps {
   className?: string;
@@ -99,9 +100,8 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
         if (signInError) throw signInError;
 
         if (data.user) {
-          // 管理员判断
-          const isAdminEmail = ['admin@example.com', 'mz2503687@gmail.com', 'it@haixin.org'].includes(email.trim().toLowerCase());
-          const returnTo = isAdminEmail ? '/dashabi/dashboard' : (returnToQuery || '/');
+          // 用户端登录，直接跳转到指定页面或首页
+          const returnTo = returnToQuery || '/';
           
           setStep("success");
           setTimeout(() => {
@@ -365,7 +365,10 @@ export function ModernAuthForm({ className }: ModernAuthFormProps) {
                     onClick={handleGoogleSignIn}
                     className="backdrop-blur-[2px] w-full flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-full py-3 px-4 transition-colors"
                   >
-                    <span className="text-lg">G</span>
+                    <div className="relative">
+                      <GoogleIcon size={20} className="object-contain" />
+                      <GoogleIconFallback size={20} />
+                    </div>
                     <span>{t('auth.continueWithGoogle')}</span>
                   </button>
                   

@@ -507,15 +507,9 @@ export function AdminDashboard() {
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link 
-                to="/" 
-                className="inline-flex items-center text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                {t('nav.back')}
-              </Link>
-              <h1 className="ml-4 text-xl font-bold text-gray-900">{t('admin.dashboard')}</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-xl font-bold text-gray-900">{t('admin.dashboard')}</h1>
+              <div className="text-sm text-gray-600">管理后台</div>
             </div>
             <div className="flex items-center">
               <button
