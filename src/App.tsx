@@ -9,6 +9,7 @@ import { JobDetails } from './components/JobDetails';
 import { LocationJobs } from './pages/LocationJobs';
 import { MyResume } from './pages/MyResume';
 import { AuthForm } from './components/AuthForm';
+import { ModernAuthForm } from './components/ModernAuthForm';
 import { AdminDashboard } from './pages/AdminDashboard';
 import Locations from './pages/Locations';
 import { supabase } from './lib/supabase';
@@ -178,7 +179,7 @@ function App() {
         <Route path="/submit-resume" element={<ResumeForm />} />
         <Route path="/jobs/:id" element={<JobDetails />} />
         <Route path="/jobs/location/:location" element={<LocationJobs />} />
-        <Route path="/dashabi/login" element={<AuthForm />} />
+        <Route path="/dashabi/login" element={<ModernAuthForm />} />
         <Route path="/my-resume" element={<MyResume />} />
         <Route path="/dashabi/dashboard" element={<AdminDashboard />} />
         <Route path="/locations" element={<Locations />} />
